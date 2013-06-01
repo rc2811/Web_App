@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.web_app"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="17" />
+
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/bow_tie"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.example.web_app.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.example.web_app.LoginActivity"
+            android:label="@string/title_activity_login"
+            android:windowSoftInputMode="adjustResize|stateVisible" >
+        </activity>
+        <activity
+            android:name="com.example.web_app.HomeScreenActivity"
+            android:label="@string/title_activity_home_screen" >
+        </activity>
+        <activity
+            android:name="com.example.web_app.SettingsActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
+        <activity
+            android:name="com.example.web_app.Register"
+            android:label="@string/title_activity_register" >
+        </activity>
+        <activity
+            android:name="com.example.web_app.RegisterActivity"
+            android:label="@string/title_activity_register" >
+        </activity>
+        <activity
+            android:name="com.example.web_app.MyFamilyActivity"
+            android:label="@string/title_activity_my_family" >
+        </activity>
+        <activity
+            android:name="com.example.web_app.FamilyMemberActivity"
+            android:label="@string/title_activity_family_member" >
+        </activity>
+        <activity
+            android:name="com.example.web_app.QuizActivity"
+            android:label="@string/title_activity_quiz" >
+        </activity>
+        <activity
+            android:name="com.example.web_app.QuizStartActivity"
+            android:label="@string/title_activity_quiz_start" >
+        </activity>
+        <activity
+            android:name="com.example.web_app.GoogleLoginActivity"
+            android:label="@string/title_activity_google_login" >
+        </activity>
+        <activity
+            android:name="com.example.web_app.SlideshowActivity"
+            android:label="@string/title_activity_slideshow" >
+        </activity>
+        <activity
+            android:name="com.example.web_app.QuizResultsActivity"
+            android:label="@string/title_activity_quiz_results" >
+        </activity>
+        <activity
+            android:name="com.example.web_app.ParseJSON"
+            android:label="@string/title_activity_parse_json" >
+        </activity>
+    </application>
+
+</manifest>
