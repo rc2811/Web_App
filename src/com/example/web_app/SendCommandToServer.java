@@ -1,4 +1,4 @@
-package com.example.web_app;
+/*package com.example.web_app;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -21,7 +21,7 @@ public class SendCommandToServer extends Thread {
 	{
 		Uri.Builder b = Uri.parse("http://146.169.53.101:55555/s").buildUpon();
 		
-        b.appendQueryParameter("command", command.toString());
+        b.appendQueryParameter("name", inputString);
         //etc more arguments
         
         
@@ -33,4 +33,4 @@ public class SendCommandToServer extends Thread {
         String returnString= in.readLine();
 	}
 
-}
+}*/

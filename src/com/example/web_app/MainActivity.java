@@ -1,25 +1,23 @@
 package com.example.web_app;
 
-import android.os.Bundle;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
-import com.facebook.*;
-import com.facebook.model.*;
+
+import com.facebook.Session;
 
 @SuppressLint("NewApi")
 public class MainActivity extends Activity {
+	
+	public Request request;
+	public String REQUEST = "";
 	
 	public final static String USERNAME = "com.example.web_app.USERNAME";
 
@@ -40,14 +38,31 @@ public class MainActivity extends Activity {
 		return true;
 	}
 	
-	public void getAccountInfo(View view) {
+	public void getAccountInfo(View view) throws InterruptedException {
 		EditText username = (EditText) findViewById(R.id.editUsername);
 		EditText password = (EditText) findViewById(R.id.editPassword);
 		
 		String usernameString = username.getText().toString();
-		String passwordString = username.getText().toString();
+		String passwordString = password.getText().toString();
 		
-		if (!accountCheck(usernameString, passwordString)) {
+		
+		Request request = new Request(Command.LOGIN, new String[] {usernameString,passwordString});
+		ServerRequest servReq = new ServerRequest();
+		servReq.execute(request);
+		
+		/*String reply = servReq.getReply();
+		
+		Context context = getApplicationContext();
+		int duration = Toast.LENGTH_LONG;
+
+		Toast toast = Toast.makeText(context, reply, duration);
+		toast.show();*/
+		
+		//Intent intent = new Intent(this, HomeScreenActivity.class);
+		//startActivity(intent);
+		
+		
+		/*if (!accountCheck(usernameString, passwordString)) {
 			Intent intent  = getIntent();
 			finish();
 			startActivity(intent);
@@ -58,7 +73,7 @@ public class MainActivity extends Activity {
 		
 			intent.putExtra(USERNAME, usernameString);
 			startActivity(intent);
-		}
+		}*/
 		
 		
 	}

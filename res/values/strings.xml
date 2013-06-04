@@ -41,5 +41,7 @@
     <string name="app_id">248424948615963</string>
     <string name="title_activity_facebook_login">FacebookLoginActivity</string>
     <string name="title_activity_main_fragment">MainFragment</string>
+    <string name="title_activity_dblogin">DBLogin</string>
+    <string name="title_activity_server_request">ServerRequestActivity</string>
 
 </resources>
