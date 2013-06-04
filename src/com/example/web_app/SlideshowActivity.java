@@ -10,6 +10,7 @@ import com.facebook.model.GraphUser;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.TableLayout;
@@ -80,7 +81,7 @@ public class SlideshowActivity extends Activity {
 	                    //		textView.setText(users.get(i).getFirstName() + " " + users.get(i).getLastName());
 	                   // 		tableLayout.addView(textView);
 	                   // 		Toast.makeText(getApplicationContext, text, duration)
-	                    	Log.i(TAG, "" + users.get(i).getId());
+	                    	Log.i(TAG, "" + users.get(i).getLocation().getProperty("name"));
 	                    	
 	                    } 
 						
@@ -93,5 +94,13 @@ public class SlideshowActivity extends Activity {
 
 
 	    }
+	}
+	
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    super.onActivityResult(requestCode, resultCode, data);
+
+	    Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
 	}
 }

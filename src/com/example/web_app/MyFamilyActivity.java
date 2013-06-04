@@ -1,5 +1,7 @@
 package com.example.web_app;
 
+import com.facebook.Session;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,6 +38,7 @@ public class MyFamilyActivity extends Activity {
 		getMenuInflater().inflate(R.menu.my_family, menu);
 		return true;
 	}
+	
 	
 	public void selectFamilyMember(int position, GridView view) {
         int pic_id = view.getId();
