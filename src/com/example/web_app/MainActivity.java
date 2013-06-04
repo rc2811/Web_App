@@ -1,6 +1,7 @@
 package com.example.web_app;
 
 import android.os.Bundle;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -12,7 +13,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+import com.facebook.*;
+import com.facebook.model.*;
 
 @SuppressLint("NewApi")
 public class MainActivity extends Activity {
@@ -25,11 +29,8 @@ public class MainActivity extends Activity {
 	
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
-		//this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		//title.setBackgroundColor(android.graphics.Color.TRANSPARENT);
-	
 		
-
+	
 	}
 
 	@Override
@@ -60,6 +61,11 @@ public class MainActivity extends Activity {
 		}
 		
 		
+	}
+	
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
 	}
 	
 	public boolean accountCheck(String username, String password) {

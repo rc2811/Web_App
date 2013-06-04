@@ -78,6 +78,23 @@
             android:name="com.example.web_app.ParseJSON"
             android:label="@string/title_activity_parse_json" >
         </activity>
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/app_id" />
+
+        <activity
+            android:name="com.facebook.LoginActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.example.web_app.FacebookLoginActivity"
+            android:label="@string/title_activity_facebook_login" >
+        </activity>
+        <activity
+            android:name="com.example.web_app.MainFragment"
+            android:label="@string/title_activity_main_fragment" >
+        </activity>
     </application>
 
 </manifest>

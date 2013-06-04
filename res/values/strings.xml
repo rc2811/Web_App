@@ -38,5 +38,8 @@
     <string name="title_activity_quiz_results">QuizResultsActivity</string>
     <string name="back_to_menu">Go Back to the Menu</string>
     <string name="title_activity_parse_json">ParseJSON</string>
+    <string name="app_id">248424948615963</string>
+    <string name="title_activity_facebook_login">FacebookLoginActivity</string>
+    <string name="title_activity_main_fragment">MainFragment</string>
 
 </resources>

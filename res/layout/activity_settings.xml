@@ -19,11 +19,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Share on Google+" />
+   
+    <com.facebook.widget.LoginButton
+        android:id="@+id/facebookAuthButton"
+        android:onClick="login"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp" />
     
-    <ImageView
-        android:id="@+id/profile_pic"
-        android:layout_height="400dp"
-        android:layout_width="wrap_content" />
+    
+
     
 
 
