@@ -2,7 +2,7 @@ CONTEXT =       ../webapps/ROOT
 LIBDIR  =       $(CONTEXT)/WEB-INF/lib
 CLSDIR  =       $(CONTEXT)/WEB-INF/classes
 JARS    =       servlets.jar
-CLASSES =       Simple.class Servlet_Postgres.class
+CLASSES =       Simple.class Servlet.class
 
 all:    $(JARS) $(CLASSES)
 
@@ -19,5 +19,5 @@ clean:
 Simple.class:	Simple.java
 	javac -cp .:/usr/lib/tomcat7/tomcat-7.0.29/lib/servlet-api.jar Simple.java
 
-      Servlet_Postgres.class:   Servlet_Postgres.java
-	javac -cp .:/usr/lib/tomcat7/tomcat-7.0.29/lib/servlet-api.jar Servlet_Postgres.java
+      Servlet.class:   Servlet.java
+	javac -cp .:/usr/lib/tomcat7/tomcat-7.0.29/lib/servlet-api.jar Servlet.java
