@@ -35,7 +35,7 @@ public class Servlet_Postgres extends HttpServlet {
             }
             sin.close();
  
-            String recievedString = new String(input);
+            String recievedString = request.getParameter("name");
             response.setStatus(HttpServletResponse.SC_OK);
             OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream());
  
