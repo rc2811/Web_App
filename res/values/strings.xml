@@ -41,7 +41,12 @@
     <string name="app_id">248424948615963</string>
     <string name="title_activity_facebook_login">FacebookLoginActivity</string>
     <string name="title_activity_main_fragment">MainFragment</string>
-    <string name="title_activity_dblogin">DBLogin</string>
-    <string name="title_activity_server_request">ServerRequestActivity</string>
+    <string name="action_people">With whom?</string>
+    <string name="action_people_default">Select family members</string>
+    <string name="error_dialog_title">Error</string>
+<string name="error_dialog_button_text">OK</string>
+<string name="single_user_selected">%1$s</string>
+<string name="two_users_selected">%1$s and %2$s</string>
+<string name="multiple_users_selected">%1$s and %2$s others</string>
 
 </resources>

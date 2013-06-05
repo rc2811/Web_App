@@ -1,11 +1,18 @@
 package com.example.web_app;
 
+import java.util.Arrays;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Request.GraphUserListCallback;
 import com.facebook.Response;
 import com.facebook.Session;
+import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 
 import android.os.Bundle;
@@ -21,18 +28,63 @@ public class SlideshowActivity extends Activity {
 	
 	Session session;
 	String TAG = "Slideshow";
+	private String defaultValue = "1";
+	private static final List<String> PERMISSIONS = Arrays.asList("user_birthday");
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_slideshow);
 		session = Session.getActiveSession();
+		
+		Log.i(TAG, session.getPermissions().toString());
+		
+	
+	//	private static final int REAUTH_ACTIVITY_CODE = 100;
+		// Check for publish permissions    
+		List<String> permissions = session.getPermissions();
+		
+
+		  
+		   session.requestNewReadPermissions(new Session.NewPermissionsRequest(this, PERMISSIONS));
+		   session.openForRead(new Session.OpenRequest(this));
+
+		
+		
 		if (session != null && session.isOpened()) {
 			Log.i(TAG, "session ok");
-			getUserData(session);
+		//	getUserData(session);
 		} else {
 			Log.d(TAG, "no session");
 		}
+		
+		Intent intent = getIntent();
+		String id = intent.getStringExtra("family");
+		Log.i(TAG, id + "");
+		
+		getUserData(id);
+		
+	}
+	
+	private void getUserData(String id) {
+		
+		String fqlQuery = "select uid, name, birthday from user where uid = " + id;
+		//		"access_token = " + session.getAccessToken();
+		Bundle params = new Bundle();
+		params.putString("q", fqlQuery);
+
+		Session session = Session.getActiveSession();
+		Request request = new Request(session, 
+		    "/fql", 
+		    params, 
+		    HttpMethod.GET, 
+		    new Request.Callback(){ 
+		        public void onCompleted(Response response) {
+		        Log.i(TAG, "Got results: " + response.toString());
+		    }
+		});
+		Request.executeBatchAsync(request);
+		
 	}
 
 	@Override
@@ -41,9 +93,12 @@ public class SlideshowActivity extends Activity {
 		getMenuInflater().inflate(R.menu.slideshow, menu);
 		return true;
 	}
+	
+	
+	
 
 	
-	private void getUserData(final Session session){
+	 /*private void getUserData(final Session session){
 	    Request request = Request.newMeRequest(session, 
 	        new Request.GraphUserCallback() {
 
@@ -81,7 +136,7 @@ public class SlideshowActivity extends Activity {
 	                    //		textView.setText(users.get(i).getFirstName() + " " + users.get(i).getLastName());
 	                   // 		tableLayout.addView(textView);
 	                   // 		Toast.makeText(getApplicationContext, text, duration)
-	                    	Log.i(TAG, "" + users.get(i).getLocation().getProperty("name"));
+	                    	Log.i(TAG, "" + users.get(i).getFirstName());
 	                    	
 	                    } 
 						
@@ -94,7 +149,7 @@ public class SlideshowActivity extends Activity {
 
 
 	    }
-	}
+	} */
 	
 	
 	@Override
