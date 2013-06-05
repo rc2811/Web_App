@@ -42,14 +42,13 @@ public class Servlet extends HttpServlet {
 			
 			stmt = conn.createStatement();
 			ResultSet rs;
-		//	System.out.println("TEST " + command);
-			if(command.equals(Command.LOGIN.toString()))
+			
+			if(command.equals(Command.LOGIN))
 			{
 				rs = stmt.executeQuery("SELECT " + dbUserKey + " FROM logins WHERE " + dbUserKey + " = '" + arguments[0] + "';");
 				if(rs.next()) {
-					rs = stmt.executeQuery("SELECT * FROM logins WHERE " + dbUserKey + " = '" + arguments[0] + "';");
-					rs.next();
-					if(rs.getString(dbPassKey).equals(arguments[1]))
+					rs = stmt.executeQuery("SELECT " + dbPassKey + " FROM logins WHERE " + dbUserKey + " = '" + arguments[0] + "';");
+					if(rs.getString(dbPassKey) == arguments[1])
 					{
 						reply = "OK";
 					}
@@ -62,12 +61,23 @@ public class Servlet extends HttpServlet {
 					reply = "USER DOES NOT EXIST";
 				}
 			}
-			else if(command.equals(Command.REGISTER.toString()))
+			else if(command.equals(Command.REGISTER))
 			{
-				
+				rs = stmt.executeQuery("SELECT " + dbUserKey + " FROM logins;");
+checkInput: 	{
+					while(rs.next())
+					{
+						if(rs.getString(dbUserKey).equals(arguments[0]))
+						{
+							reply = "USERNAME ALREADY IN USE";
+							break checkInput;
+						}
+					}
+					
+					
+					
+				}
 			}
-			
-
 			
 			
 			response.setStatus(HttpServletResponse.SC_OK);
