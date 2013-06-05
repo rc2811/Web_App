@@ -1,10 +1,20 @@
 package com.example.web_app;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
@@ -16,8 +26,7 @@ import com.facebook.Session;
 @SuppressLint("NewApi")
 public class MainActivity extends Activity {
 	
-	public Request request;
-	public String REQUEST = "";
+	public Context context;
 	
 	public final static String USERNAME = "com.example.web_app.USERNAME";
 
@@ -26,6 +35,10 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 	
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
+		context = this;
+		
+		
 		setContentView(R.layout.activity_main);
 		
 	
@@ -47,7 +60,9 @@ public class MainActivity extends Activity {
 		
 		
 		Request request = new Request(Command.LOGIN, new String[] {usernameString,passwordString});
-		ServerRequest servReq = new ServerRequest();
+		TempServerRequest servReq = new TempServerRequest();
+		
+		
 		servReq.execute(request);
 		
 		/*String reply = servReq.getReply();
@@ -106,6 +121,80 @@ public class MainActivity extends Activity {
 		Intent intent = new Intent(this, RegisterActivity.class);
 		startActivity(intent);
 	
+	}
+	
+	//temporary internal class
+	public class TempServerRequest extends AsyncTask<Request, Void, String>{
+		
+		private String uri = "http://146.169.53.101:55555/s";
+		
+		public TempServerRequest() {
+		}
+
+		@Override
+		protected String doInBackground(Request... request) {
+			String retval = "";
+			for(Request r : request) {
+				Uri.Builder b = Uri.parse(uri).buildUpon();
+		        b.appendQueryParameter("command", r.command.toString());
+		        for(String s : r.args) {
+		        	b.appendQueryParameter("args", s);
+		        }
+		        
+		        URL url = null;
+				try {
+					url = new URL(b.build().toString());
+				} catch (MalformedURLException e) {
+					retval += e + "\n";
+					e.printStackTrace();
+				}
+		        URLConnection connection = null;
+				try {
+					connection = url.openConnection();
+				} catch (IOException e) {
+					retval += e + "\n";
+					e.printStackTrace();
+				}
+		        
+		        BufferedReader in = null;
+				try {
+					in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				} catch (IOException e) {
+					retval += e + "\n";
+					e.printStackTrace();
+				}
+		        
+		        try {
+					String returnString = in.readLine();
+					retval += returnString;
+				} catch (IOException e) {
+					retval += "\n" + e;
+					e.printStackTrace();
+				}
+			}
+			
+			return retval;
+		}
+		
+		@Override
+		protected void onPostExecute(String result) {
+			Log.v("Message from server", result);
+			if(result.equals("OK")) {
+				Log.v("message comparison", "Login Good");
+				Intent intent = new Intent(context, HomeScreenActivity.class);
+				startActivity(intent);
+			} else {
+				Context context = getApplicationContext();
+				int duration = Toast.LENGTH_LONG;
+
+				Toast toast = Toast.makeText(context, result, duration);
+				toast.show();
+			}
+			
+			
+			
+		}
+		
 	}
 
 }
