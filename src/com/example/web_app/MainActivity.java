@@ -1,23 +1,16 @@
 package com.example.web_app;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.AsyncTask;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -27,6 +20,9 @@ import com.facebook.Session;
 public class MainActivity extends Activity implements contextSwitcher {
 	
 	public Context context;
+	public static final String PREFS_NAME = "UserPrefs";
+	private static final String PREF_USERNAME = "username";
+	private static final String PREF_PASSWORD = "password";
 	
 	public final static String USERNAME = "com.example.web_app.USERNAME";
 
@@ -38,8 +34,21 @@ public class MainActivity extends Activity implements contextSwitcher {
 		
 		context = this;
 		
-		
 		setContentView(R.layout.activity_main);
+		
+		SharedPreferences pref = getSharedPreferences(PREFS_NAME,MODE_PRIVATE);   
+		String username = pref.getString(PREF_USERNAME, null);
+		String password = pref.getString(PREF_PASSWORD, null);
+		
+		EditText eUser = (EditText) findViewById(R.id.editUsername);
+		EditText ePass = (EditText) findViewById(R.id.editPassword);
+		CheckBox cBox = (CheckBox) findViewById(R.id.rememberUser);
+
+		if (username != null && password != null) {
+			eUser.setText(username);
+			ePass.setText(password);
+			cBox.setChecked(true);
+		}
 		
 	
 	}
@@ -122,80 +131,6 @@ public class MainActivity extends Activity implements contextSwitcher {
 	
 	}
 	
-	//temporary internal class
-	public class TempServerRequest extends AsyncTask<Request, Void, String>{
-		
-		private String uri = "http://146.169.53.105:55555/s";
-		
-		public TempServerRequest() {
-		}
-
-		@Override
-		protected String doInBackground(Request... request) {
-			String retval = "";
-			for(Request r : request) {
-				Uri.Builder b = Uri.parse(uri).buildUpon();
-		        b.appendQueryParameter("command", r.command.toString());
-		        for(String s : r.args) {
-		        	b.appendQueryParameter("args", s);
-		        }
-		        
-		        URL url = null;
-				try {
-					url = new URL(b.build().toString());
-				} catch (MalformedURLException e) {
-					retval += e + "\n";
-					e.printStackTrace();
-				}
-		        URLConnection connection = null;
-				try {
-					connection = url.openConnection();
-				} catch (IOException e) {
-					retval += e + "\n";
-					e.printStackTrace();
-				}
-		        
-		        BufferedReader in = null;
-				try {
-					in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-				} catch (IOException e) {
-					retval += e + "\n";
-					e.printStackTrace();
-				}
-		        
-		        try {
-					String returnString = in.readLine();
-					retval += returnString;
-				} catch (IOException e) {
-					retval += "\n" + e;
-					e.printStackTrace();
-				}
-			}
-			
-			return retval;
-		}
-		
-		@Override
-		protected void onPostExecute(String result) {
-			Log.v("Message from server", result);
-			if(result.equals("OK")) {
-				Log.v("message comparison", "Login Good");
-				 Intent intent = new Intent(context, HomeScreenActivity.class);
-				startActivity(intent);
-			} else {
-				Context context = getApplicationContext();
-				int duration = Toast.LENGTH_LONG;
-
-				Toast toast = Toast.makeText(context, result, duration);
-				toast.show();
-			}
-			
-			
-			
-		}
-		
-	}
-
 	@Override
 	public void cSwitch(String result) {
 		Log.v("Message from server", result);
@@ -210,6 +145,17 @@ public class MainActivity extends Activity implements contextSwitcher {
 			Toast toast = Toast.makeText(context, result, duration);
 			toast.show();
 		}
+	}
+	
+	public void rememberUser(View view) {
+		
+		EditText username = (EditText) findViewById(R.id.editUsername);
+		EditText password = (EditText) findViewById(R.id.editPassword);
+		String usernameString = username.getText().toString();
+		String passwordString = password.getText().toString();
+		
+		getSharedPreferences(PREFS_NAME,MODE_PRIVATE).edit().putString(PREF_USERNAME, usernameString ).commit();
+		getSharedPreferences(PREFS_NAME,MODE_PRIVATE).edit().putString(PREF_PASSWORD, passwordString ).commit();
 	}
 
 }

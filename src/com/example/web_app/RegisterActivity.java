@@ -66,17 +66,6 @@ public class RegisterActivity extends Activity implements OnItemSelectedListener
 	}
 
 	@Override
-	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
-			long arg3) {
-		
-	}
-
-	@Override
-	public void onNothingSelected(AdapterView<?> arg0) {
-		
-	}
-
-	@Override
 	public void cSwitch(String result) {
 		Log.v("Message from server. Register", result);
 		if(result.equals("OK")) {
@@ -90,6 +79,19 @@ public class RegisterActivity extends Activity implements OnItemSelectedListener
 			Toast toast = Toast.makeText(context, result, duration);
 			toast.show();
 		}
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
+			long arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
