@@ -1,5 +1,7 @@
 package com.example.web_app;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,12 +14,14 @@ import com.facebook.Request;
 import com.facebook.Request.GraphUserListCallback;
 import com.facebook.Response;
 import com.facebook.Session;
+import com.facebook.android.FacebookError;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.TableLayout;
@@ -29,7 +33,7 @@ public class SlideshowActivity extends Activity {
 	Session session;
 	String TAG = "Slideshow";
 	private String defaultValue = "1";
-	private static final List<String> PERMISSIONS = Arrays.asList("user_birthday");
+	private static final List<String> PERMISSIONS = Arrays.asList("friends_birthday", "user_photos", "friends_photos");
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,7 @@ public class SlideshowActivity extends Activity {
 		Log.i(TAG, id + "");
 		
 		getUserData(id);
+		getPhotos(id);
 		
 	}
 	
@@ -86,6 +91,46 @@ public class SlideshowActivity extends Activity {
 		Request.executeBatchAsync(request);
 		
 	}
+	
+	private void getPhotos(String id) {
+		
+		String fqlQuery = "select src from photo where owner = " + id;
+		//		"access_token = " + session.getAccessToken();
+		Bundle params = new Bundle();
+		params.putString("q", fqlQuery);
+
+		Session session = Session.getActiveSession();
+		Request request = new Request(session, 
+		    "/fql", 
+		    params, 
+		    HttpMethod.GET, 
+		    new Request.Callback(){ 
+		        public void onCompleted(Response response) {
+		        Log.i(TAG, "Got results: " + response.toString());
+		        try {
+					Log.i(TAG, response.getGraphObject().getInnerJSONObject()..getString("src"));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    }
+		});
+		Request.executeBatchAsync(request);
+		
+	}
+	
+	public static Drawable LoadImageFromWebOperations(String url) {
+	    try {
+	        InputStream is = (InputStream) new URL(url).getContent();
+	        Drawable d = Drawable.createFromStream(is, "src name");
+	        return d;
+	    } catch (Exception e) {
+	        return null;
+	    }
+	}
+	
+	
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
