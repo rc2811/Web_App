@@ -14,6 +14,7 @@ import android.util.Log;
 
 public class ServerRequest extends AsyncTask<Request, Void, String>{
 	
+	//private String uri = "http://146.169.53.105:55555/s";
 	private String uri = "http://shell1.doc.ic.ac.uk:55555/s";
 	public contextSwitcher c;
 	
