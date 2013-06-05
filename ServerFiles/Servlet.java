@@ -31,24 +31,29 @@ public class Servlet extends HttpServlet {
  
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
     {
-        Statement stmt;
+        
 		try
 		{
 
-        
+			Statement stmt;
+			PreparedStatement pstmt;
 			String command = request.getParameter("command");
 			String[] arguments = request.getParameterValues("args");
 			String reply = "";
 			
 			stmt = conn.createStatement();
+
 			ResultSet rs;
 			
-			if(command.equals(Command.LOGIN))
+			if(command.equals(Command.LOGIN.toString()))
 			{
 				rs = stmt.executeQuery("SELECT " + dbUserKey + " FROM logins WHERE " + dbUserKey + " = '" + arguments[0] + "';");
 				if(rs.next()) {
-					rs = stmt.executeQuery("SELECT " + dbPassKey + " FROM logins WHERE " + dbUserKey + " = '" + arguments[0] + "';");
-					if(rs.getString(dbPassKey) == arguments[1])
+					
+					rs = stmt.executeQuery("SELECT * FROM logins WHERE " + dbUserKey + " = '" + arguments[0] + "';");
+					rs.next();
+					
+					if(rs.getString(dbPassKey).equals(arguments[1]))
 					{
 						reply = "OK";
 					}
@@ -61,7 +66,7 @@ public class Servlet extends HttpServlet {
 					reply = "USER DOES NOT EXIST";
 				}
 			}
-			else if(command.equals(Command.REGISTER))
+			else if(command.equals(Command.REGISTER.toString()))
 			{
 				rs = stmt.executeQuery("SELECT " + dbUserKey + " FROM logins;");
 checkInput: 	{
@@ -74,7 +79,10 @@ checkInput: 	{
 						}
 					}
 					
-					
+				pstmt = conn.prepareStatement("INSERT into logins VALUES('"+ arguments[0] + "', '" + arguments[1] + "', " + Integer.parseInt(arguments[2]) + ");");
+
+				pstmt.executeUpdate();
+				reply = "OK";
 					
 				}
 			}

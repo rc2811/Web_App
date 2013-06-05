@@ -2,7 +2,7 @@ CONTEXT =       ../webapps/ROOT
 LIBDIR  =       $(CONTEXT)/WEB-INF/lib
 CLSDIR  =       $(CONTEXT)/WEB-INF/classes
 JARS    =       servlets.jar
-CLASSES =       Simple.class Servlet.class
+CLASSES =       Servlet.class
 
 all:    $(JARS) $(CLASSES)
 
@@ -16,8 +16,6 @@ clean:
       servlets.jar:      $(CLASSES)
 	jar cf servlets.jar $(CLASSES)
 
-Simple.class:	Simple.java
-	javac -cp .:/usr/lib/tomcat7/tomcat-7.0.29/lib/servlet-api.jar Simple.java
 
       Servlet.class:   Servlet.java
 	javac -cp .:/usr/lib/tomcat7/tomcat-7.0.29/lib/servlet-api.jar Servlet.java
