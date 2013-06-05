@@ -14,11 +14,11 @@ import android.util.Log;
 
 public class ServerRequest extends AsyncTask<Request, Void, String>{
 	
-	private String uri = "http://146.169.53.101:55555/s";
+	private String uri = "http://146.169.53.105:55555/s";
+	public contextSwitcher c;
 	
-	private Intent intent;
-	
-	public ServerRequest() {
+	public ServerRequest(contextSwitcher c) {
+		this.c = c;
 	}
 
 	@Override
@@ -56,9 +56,9 @@ public class ServerRequest extends AsyncTask<Request, Void, String>{
 	        
 	        try {
 				String returnString = in.readLine();
-				retval += returnString + "\n";
+				retval += returnString;
 			} catch (IOException e) {
-				retval += e + "\n";
+				retval += "\n" + e;
 				e.printStackTrace();
 			}
 		}
@@ -68,8 +68,7 @@ public class ServerRequest extends AsyncTask<Request, Void, String>{
 	
 	@Override
 	protected void onPostExecute(String result) {
-		Log.v("Message from server", result);
-		
+		c.cSwitch(result); 
 	}
 	
 }

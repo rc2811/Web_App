@@ -24,7 +24,7 @@ import android.widget.Toast;
 import com.facebook.Session;
 
 @SuppressLint("NewApi")
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements contextSwitcher {
 	
 	public Context context;
 	
@@ -60,8 +60,7 @@ public class MainActivity extends Activity {
 		
 		
 		Request request = new Request(Command.LOGIN, new String[] {usernameString,passwordString});
-		TempServerRequest servReq = new TempServerRequest();
-		
+		ServerRequest servReq = new ServerRequest(this);
 		
 		servReq.execute(request);
 		
@@ -126,7 +125,7 @@ public class MainActivity extends Activity {
 	//temporary internal class
 	public class TempServerRequest extends AsyncTask<Request, Void, String>{
 		
-		private String uri = "http://146.169.53.101:55555/s";
+		private String uri = "http://146.169.53.105:55555/s";
 		
 		public TempServerRequest() {
 		}
@@ -181,7 +180,7 @@ public class MainActivity extends Activity {
 			Log.v("Message from server", result);
 			if(result.equals("OK")) {
 				Log.v("message comparison", "Login Good");
-				Intent intent = new Intent(context, HomeScreenActivity.class);
+				 Intent intent = new Intent(context, HomeScreenActivity.class);
 				startActivity(intent);
 			} else {
 				Context context = getApplicationContext();
@@ -195,6 +194,22 @@ public class MainActivity extends Activity {
 			
 		}
 		
+	}
+
+	@Override
+	public void cSwitch(String result) {
+		Log.v("Message from server", result);
+		if(result.equals("OK")) {
+			Log.v("message comparison", "Login Good");
+			 Intent intent = new Intent(context, HomeScreenActivity.class);
+			startActivity(intent);
+		} else {
+			Context context = getApplicationContext();
+			int duration = Toast.LENGTH_LONG;
+
+			Toast toast = Toast.makeText(context, result, duration);
+			toast.show();
+		}
 	}
 
 }
