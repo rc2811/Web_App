@@ -45,4 +45,11 @@
         android:text="@string/register"
         android:onClick="register" />
     
+    <Spinner
+                android:id="@+id/acc_type_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+
+        android:paddingTop="8dp" />
+    
 </TableLayout>

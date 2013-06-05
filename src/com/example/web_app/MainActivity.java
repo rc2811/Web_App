@@ -1,32 +1,35 @@
 package com.example.web_app;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.AsyncTask;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.facebook.Session;
 
 @SuppressLint("NewApi")
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements contextSwitcher {
 	
 	public Context context;
+	public EditText editUsername;
+	public EditText editPassword;
+	public CheckBox cBox;
+
+	
+	
+	//User preferences for remembering username and password
+	public static final String PREFS_NAME = "UserPrefs";
+	private static final String PREF_USERNAME = "username";
+	private static final String PREF_PASSWORD = "password";
 	
 	public final static String USERNAME = "com.example.web_app.USERNAME";
 
@@ -38,8 +41,21 @@ public class MainActivity extends Activity {
 		
 		context = this;
 		
-		
 		setContentView(R.layout.activity_main);
+		
+		SharedPreferences pref = getSharedPreferences(PREFS_NAME,MODE_PRIVATE);   
+		String username = pref.getString(PREF_USERNAME, null);
+		String password = pref.getString(PREF_PASSWORD, null);
+		
+		editUsername = (EditText) findViewById(R.id.editUsername);
+		editPassword = (EditText) findViewById(R.id.editPassword);
+		cBox = (CheckBox) findViewById(R.id.rememberUser);
+
+		if (username != null && password != null) {
+			editUsername.setText(username);
+			editPassword.setText(password);
+			cBox.setChecked(true);
+		}
 		
 	
 	}
@@ -51,45 +67,14 @@ public class MainActivity extends Activity {
 		return true;
 	}
 	
+	//Called by login button
 	public void getAccountInfo(View view) throws InterruptedException {
-		EditText username = (EditText) findViewById(R.id.editUsername);
-		EditText password = (EditText) findViewById(R.id.editPassword);
-		
-		String usernameString = username.getText().toString();
-		String passwordString = password.getText().toString();
-		
+		String usernameString = editUsername.getText().toString();
+		String passwordString = editPassword.getText().toString();
 		
 		Request request = new Request(Command.LOGIN, new String[] {usernameString,passwordString});
-		TempServerRequest servReq = new TempServerRequest();
-		
-		
+		ServerRequest servReq = new ServerRequest(this);
 		servReq.execute(request);
-		
-		/*String reply = servReq.getReply();
-		
-		Context context = getApplicationContext();
-		int duration = Toast.LENGTH_LONG;
-
-		Toast toast = Toast.makeText(context, reply, duration);
-		toast.show();*/
-		
-		//Intent intent = new Intent(this, HomeScreenActivity.class);
-		//startActivity(intent);
-		
-		
-		/*if (!accountCheck(usernameString, passwordString)) {
-			Intent intent  = getIntent();
-			finish();
-			startActivity(intent);
-			
-		} else {
-		
-			Intent intent = new Intent(this, HomeScreenActivity.class);
-		
-			intent.putExtra(USERNAME, usernameString);
-			startActivity(intent);
-		}*/
-		
 		
 	}
 	
@@ -98,102 +83,44 @@ public class MainActivity extends Activity {
 		Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
 	}
 	
-	public boolean accountCheck(String username, String password) {
-		
-		//TODO implement a call to the database to check details
-		
-		/*if (!username.equals("Rob")) {
-			Toast.makeText(getApplicationContext(),
-					"No account exists under that username", Toast.LENGTH_SHORT);
-			return false;
-		}
-		if (!username.equals("hello")) {
-			Toast.makeText(getApplicationContext(),
-					"Incorrect Password", Toast.LENGTH_SHORT);
-			return false;
-		} */
-		return true;
-	
-	}
-	
+	//Called by register button
 	public void register(View view) {
-		
 		Intent intent = new Intent(this, RegisterActivity.class);
 		startActivity(intent);
-	
 	}
 	
-	//temporary internal class
-	public class TempServerRequest extends AsyncTask<Request, Void, String>{
-		
-		private String uri = "http://146.169.53.101:55555/s";
-		
-		public TempServerRequest() {
-		}
+	//Called by ServerRequest on post execution
+	@Override
+	public void cSwitch(String result) {
+		Log.v("Message from server", result);
+		if(result.equals("OK")) {
+			Log.v("message comparison", "Login Good");
+			 Intent intent = new Intent(context, HomeScreenActivity.class);
+			startActivity(intent);
+		} else {
+			Context context = getApplicationContext();
+			int duration = Toast.LENGTH_LONG;
 
-		@Override
-		protected String doInBackground(Request... request) {
-			String retval = "";
-			for(Request r : request) {
-				Uri.Builder b = Uri.parse(uri).buildUpon();
-		        b.appendQueryParameter("command", r.command.toString());
-		        for(String s : r.args) {
-		        	b.appendQueryParameter("args", s);
-		        }
-		        
-		        URL url = null;
-				try {
-					url = new URL(b.build().toString());
-				} catch (MalformedURLException e) {
-					retval += e + "\n";
-					e.printStackTrace();
-				}
-		        URLConnection connection = null;
-				try {
-					connection = url.openConnection();
-				} catch (IOException e) {
-					retval += e + "\n";
-					e.printStackTrace();
-				}
-		        
-		        BufferedReader in = null;
-				try {
-					in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-				} catch (IOException e) {
-					retval += e + "\n";
-					e.printStackTrace();
-				}
-		        
-		        try {
-					String returnString = in.readLine();
-					retval += returnString;
-				} catch (IOException e) {
-					retval += "\n" + e;
-					e.printStackTrace();
-				}
-			}
-			
-			return retval;
+			Toast toast = Toast.makeText(context, result, duration);
+			toast.show();
+		}
+	}
+	
+	//Called by "Remember me" check box
+	public void rememberUser(View view) {
+		
+		//Get the username and password that has been input
+		//Store current username and password in shared preferences
+		if(cBox.isChecked()){
+			String usernameString = editUsername.getText().toString();
+			String passwordString = editPassword.getText().toString();
+			getSharedPreferences(PREFS_NAME,MODE_PRIVATE).edit().putString(PREF_USERNAME, usernameString ).putString(PREF_PASSWORD, passwordString ).commit();
+		} else {
+			getSharedPreferences(PREFS_NAME,MODE_PRIVATE).edit().putString(PREF_USERNAME, null).putString(PREF_PASSWORD, null ).commit();
+
 		}
 		
-		@Override
-		protected void onPostExecute(String result) {
-			Log.v("Message from server", result);
-			if(result.equals("OK")) {
-				Log.v("message comparison", "Login Good");
-				Intent intent = new Intent(context, HomeScreenActivity.class);
-				startActivity(intent);
-			} else {
-				Context context = getApplicationContext();
-				int duration = Toast.LENGTH_LONG;
-
-				Toast toast = Toast.makeText(context, result, duration);
-				toast.show();
-			}
-			
-			
-			
-		}
+		
 		
 	}
 
