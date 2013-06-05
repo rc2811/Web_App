@@ -1,6 +1,11 @@
 package com.example.web_app;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -19,11 +24,19 @@ import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.Menu;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,11 +48,14 @@ public class SlideshowActivity extends Activity {
 	private String defaultValue = "1";
 	private static final List<String> PERMISSIONS = Arrays.asList("friends_birthday", "user_photos", "friends_photos");
 
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_slideshow);
 		session = Session.getActiveSession();
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+		StrictMode.setThreadPolicy(policy);
 		
 		Log.i(TAG, session.getPermissions().toString());
 		
@@ -92,6 +108,7 @@ public class SlideshowActivity extends Activity {
 		
 	}
 	
+	@SuppressLint("NewApi")
 	private void getPhotos(String id) {
 		
 		String fqlQuery = "select src from photo where owner = " + id;
@@ -108,8 +125,34 @@ public class SlideshowActivity extends Activity {
 		        public void onCompleted(Response response) {
 		        Log.i(TAG, "Got results: " + response.toString());
 		        try {
-					Log.i(TAG, response.getGraphObject().getInnerJSONObject()..getString("src"));
+		        	JSONArray photos = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
+					for (int i = 0; i < 20; i++) {
+						Log.i(TAG, photos.getJSONObject(i).getString("src"));
+						String url = photos.getJSONObject(i).getString("src");
+						Drawable d = drawable_from_url(url, "img");
+						
+						if (d == null) {
+							Log.i(TAG, "no drawable");
+						}
+						
+						ImageView imageView = new ImageView(getApplicationContext());
+						imageView.setBackground(d);
+						
+						
+						LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(800, 800);
+						imageView.setLayoutParams(layoutParams);
+						TableLayout tableLayout = (TableLayout) findViewById(R.id.container);
+						tableLayout.addView(imageView, ViewGroup.LayoutParams.WRAP_CONTENT);
+						
+						
+					}
 				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -119,15 +162,17 @@ public class SlideshowActivity extends Activity {
 		
 	}
 	
-	public static Drawable LoadImageFromWebOperations(String url) {
-	    try {
-	        InputStream is = (InputStream) new URL(url).getContent();
-	        Drawable d = Drawable.createFromStream(is, "src name");
-	        return d;
-	    } catch (Exception e) {
-	        return null;
-	    }
+	
+	
+	@SuppressWarnings("unused")
+	private Drawable drawable_from_url(String url, String src_name) throws 
+	   java.net.MalformedURLException, java.io.IOException {
+		
+	   return Drawable.createFromStream(((java.io.InputStream)
+	      new java.net.URL(url).getContent()), src_name);
 	}
+	
+//	private String removeExtras(S)
 	
 	
 	
