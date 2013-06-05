@@ -40,7 +40,7 @@
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
          android:text="Remember me" 
-         android:onClick="rememberUser"/>
+         android:onClick="rememberUser"/>		
 	
     <Button
         android:id="@+id/loginButton"
