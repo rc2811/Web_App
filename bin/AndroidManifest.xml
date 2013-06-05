@@ -95,14 +95,8 @@
             android:name="com.example.web_app.MainFragment"
             android:label="@string/title_activity_main_fragment" >
         </activity>
-        <activity
-            android:name="com.example.web_app.DBLogin"
-            android:label="@string/title_activity_dblogin" >
-        </activity>
-        <activity
-            android:name="com.example.web_app.ServerRequestActivity"
-            android:label="@string/title_activity_server_request" >
-        </activity>
+        <activity android:name="com.example.web_app.PickerActivity"
+          android:label="@string/app_name" />
     </application>
 
 </manifest>
