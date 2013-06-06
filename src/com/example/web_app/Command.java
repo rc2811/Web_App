@@ -1,5 +1,5 @@
 package com.example.web_app;
 
 public enum Command {
-	LOGIN, REGISTER
+	LOGIN, REGISTER, FETCHIDS
 }

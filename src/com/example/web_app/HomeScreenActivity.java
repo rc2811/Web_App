@@ -6,22 +6,23 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.TargetApi;
+import android.app.ListActivity;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.StrictMode;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
+
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 
-import android.os.Build;
-import android.os.Bundle;
-import android.os.StrictMode;
-import android.annotation.TargetApi;
-import android.app.ListActivity;
-import android.content.Intent;
-import android.view.View;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-
 @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-public class HomeScreenActivity extends ListActivity {
+public class HomeScreenActivity extends ListActivity implements contextSwitcher {
 	
     private static final String FROM_TITLE = "title";
     private static final String TITLE_KEY = "title";
@@ -135,7 +136,28 @@ public class HomeScreenActivity extends ListActivity {
 	    super.onSaveInstanceState(outState);
 	    uiHelper.onSaveInstanceState(outState);
 	}
-}
+	
+	public void requestIDs() {
+		Request request = new Request(Command.FETCHIDS, new String[] {"matt"});
+		ServerRequest servReq = new ServerRequest(this);
+		servReq.execute(request);
+	}
 
+	@Override
+	public void cSwitch(String s) {
+		TextView textView = new TextView(this);
+		
+		String[] reply = s.split(";");
+		String result = "";
+		
+		for(String x : reply) {
+			result += x;
+			result += "\n";
+		}
+		
+		textView.setText(result);
+		setContentView(textView);
+	}
+}
 
 
