@@ -37,7 +37,6 @@ public class Servlet extends HttpServlet {
 
 			Statement stmt;
 			PreparedStatement pstmt;
-			
 			String command = request.getParameter("command");
 			String[] arguments = request.getParameterValues("args");
 			String reply = "";
@@ -86,10 +85,6 @@ checkInput: 	{
 				reply = "OK";
 					
 				}
-			}
-			else
-			{
-				reply = "UNKNOWN COMMAND";
 			}
 			
 			

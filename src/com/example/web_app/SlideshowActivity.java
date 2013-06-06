@@ -9,6 +9,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,11 +21,14 @@ import com.facebook.Request;
 import com.facebook.Request.GraphUserListCallback;
 import com.facebook.Response;
 import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
 import com.facebook.android.FacebookError;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.StrictMode;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -32,6 +37,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -47,6 +53,7 @@ public class SlideshowActivity extends Activity {
 	String TAG = "Slideshow";
 	private String defaultValue = "1";
 	private static final List<String> PERMISSIONS = Arrays.asList("friends_birthday", "user_photos", "friends_photos");
+	private UiLifecycleHelper uiHelper;
 
 	@SuppressLint("NewApi")
 	@Override
@@ -54,37 +61,42 @@ public class SlideshowActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_slideshow);
 		session = Session.getActiveSession();
+		
+		Session session1 = new Session(this);
+		session1.openForRead(new Session.OpenRequest(this));
+
+		session1.requestNewReadPermissions(new Session.NewPermissionsRequest(this, PERMISSIONS));
+			
+			
+		Session.setActiveSession(session1);
+		
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 		StrictMode.setThreadPolicy(policy);
 		
+		
 		Log.i(TAG, session.getPermissions().toString());
 		
+		getUserData("746975053");
+		
+		getPhoto("746975053");
+		
+	}
 	
-	//	private static final int REAUTH_ACTIVITY_CODE = 100;
-		// Check for publish permissions    
-		List<String> permissions = session.getPermissions();
-		
+	
 
-		  
-		   session.requestNewReadPermissions(new Session.NewPermissionsRequest(this, PERMISSIONS));
-		   session.openForRead(new Session.OpenRequest(this));
 
-		
-		
-		if (session != null && session.isOpened()) {
-			Log.i(TAG, "session ok");
-		//	getUserData(session);
-		} else {
-			Log.d(TAG, "no session");
-		}
-		
-		Intent intent = getIntent();
-		String id = intent.getStringExtra("family");
-		Log.i(TAG, id + "");
-		
-		getUserData(id);
-		getPhotos(id);
-		
+	@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    super.onKeyDown(keyCode, event);
+        switch(keyCode)
+        {
+        case KeyEvent.KEYCODE_BACK:
+        	Intent intent = new Intent(this, HomeScreenActivity.class);
+        	startActivity(intent);
+         
+            return true;
+        }
+        return false;
 	}
 	
 	private void getUserData(String id) {
@@ -109,10 +121,11 @@ public class SlideshowActivity extends Activity {
 	}
 	
 	@SuppressLint("NewApi")
-	private void getPhotos(String id) {
+	private void getPhoto(String id) {
 		
 		String fqlQuery = "select src from photo where owner = " + id;
-		//		"access_token = " + session.getAccessToken();
+
+
 		Bundle params = new Bundle();
 		params.putString("q", fqlQuery);
 
@@ -126,7 +139,8 @@ public class SlideshowActivity extends Activity {
 		        Log.i(TAG, "Got results: " + response.toString());
 		        try {
 		        	JSONArray photos = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
-					for (int i = 0; i < 20; i++) {
+					int i = (int) Math.random() * photos.length();
+					
 						Log.i(TAG, photos.getJSONObject(i).getString("src"));
 						String url = photos.getJSONObject(i).getString("src");
 						Drawable d = drawable_from_url(url, "img");
@@ -135,17 +149,9 @@ public class SlideshowActivity extends Activity {
 							Log.i(TAG, "no drawable");
 						}
 						
-						ImageView imageView = new ImageView(getApplicationContext());
-						imageView.setBackground(d);
-						
-						
-						LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(800, 800);
-						imageView.setLayoutParams(layoutParams);
-						TableLayout tableLayout = (TableLayout) findViewById(R.id.container);
-						tableLayout.addView(imageView, ViewGroup.LayoutParams.WRAP_CONTENT);
-						
-						
-					}
+						ImageView imageView = (ImageView) findViewById(R.id.slideshow_image);
+						imageView.setBackground(d);	
+					
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -156,15 +162,16 @@ public class SlideshowActivity extends Activity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-		    }
+		        }
 		});
 		Request.executeBatchAsync(request);
 		
 	}
+
+
 	
 	
 	
-	@SuppressWarnings("unused")
 	private Drawable drawable_from_url(String url, String src_name) throws 
 	   java.net.MalformedURLException, java.io.IOException {
 		
@@ -184,68 +191,4 @@ public class SlideshowActivity extends Activity {
 		return true;
 	}
 	
-	
-	
-
-	
-	 /*private void getUserData(final Session session){
-	    Request request = Request.newMeRequest(session, 
-	        new Request.GraphUserCallback() {
-
-			@Override
-			public void onCompleted(GraphUser user, Response response) {
-	            if(user != null && session == Session.getActiveSession()){
-	                //pictureView.setProfileId(user.getId());
-	               // userName.setText(user.getName());
-	                getFriends();
-
-	            }
-	            if(response.getError() !=null){
-
-	            }
-				
-			}
-	    });
-	    request.executeAsync();
-	}
-	
-	private void getFriends(){
-	    Session activeSession = Session.getActiveSession();
-	    if(activeSession.getState().isOpened()){
-	        Request friendRequest = Request.newMyFriendsRequest(activeSession, 
-	            new GraphUserListCallback(){
-
-					@Override
-					public void onCompleted(List<GraphUser> users,
-							Response response) {
-	                    Log.d("INFO", response.toString());
-                    	TableLayout tableLayout = (TableLayout) findViewById(R.layout.activity_slideshow);
-                    	
-	                    for (int i = 0; i < users.size(); i++) {
-	                   // 	if (users.get(i).getFirstName() != null && users.get(i).getLastName() != null) {
-	                    //		textView.setText(users.get(i).getFirstName() + " " + users.get(i).getLastName());
-	                   // 		tableLayout.addView(textView);
-	                   // 		Toast.makeText(getApplicationContext, text, duration)
-	                    	Log.i(TAG, "" + users.get(i).getFirstName());
-	                    	
-	                    } 
-						
-					}
-	        });
-	        Bundle params = new Bundle();
-	        params.putString("fields", "id, name, picture");
-	        friendRequest.setParameters(params);
-	        friendRequest.executeAsync();
-
-
-	    }
-	} */
-	
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    super.onActivityResult(requestCode, resultCode, data);
-
-	    Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
-	}
 }

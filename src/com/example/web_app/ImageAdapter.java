@@ -1,5 +1,8 @@
 package com.example.web_app;
 
+import java.util.List;
+
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.AvoidXfermode.Mode;
@@ -10,9 +13,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.graphics.drawable.shapes.Shape;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
@@ -20,31 +25,27 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.BaseAdapter;
 
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class ImageAdapter extends BaseAdapter implements ListAdapter {
 
 	private Context mContext;
 	
-	private Integer[] mThumbIds = {
-			R.drawable.rob,
-			R.drawable.andrew,
-			R.drawable.tom,
-			R.drawable.james,
-			R.drawable.jean,
-			R.drawable.matt
-	};
+	private List<Drawable> profile_pics;
 	
-	public ImageAdapter(Context c) {
+	public ImageAdapter(Context c,	List<Drawable> profile_pics) {
 		mContext = c;
+		this.profile_pics = profile_pics;
+		
 	}
 	
 	@Override
 	public int getCount() {
-		return mThumbIds.length;
+		return profile_pics.size();
 	}
 
 	@Override
 	public Object getItem(int position) {
-		return mThumbIds[position];
+		return profile_pics.get(position);
 	}
 
 	@Override
@@ -61,6 +62,7 @@ public class ImageAdapter extends BaseAdapter implements ListAdapter {
         ShapeDrawable s = new ShapeDrawable(new OvalShape());
         
         if (convertView == null) {  // if it's not recycled, initialize some attributes
+        
             imageView = new ImageView(mContext);
             imageView.setLayoutParams(new GridView.LayoutParams(600, 600));
         	imageView.setImageDrawable(s);
@@ -70,7 +72,7 @@ public class ImageAdapter extends BaseAdapter implements ListAdapter {
             imageView = (ImageView) convertView;
         }
 
-        imageView.setImageResource(mThumbIds[position]);
+        imageView.setBackground(profile_pics.get(position));
         return imageView;
 	}
 	
