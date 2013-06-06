@@ -8,6 +8,7 @@ public class Servlet extends HttpServlet {
 	
 	private static final String dbPassKey = "password";
 	private static final String dbUserKey = "username";
+	private static final String dbFIDKey = "friendIDs";
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -41,6 +42,9 @@ public class Servlet extends HttpServlet {
 			String command = request.getParameter("command");
 			String[] arguments = request.getParameterValues("args");
 			String reply = "";
+			
+			if(command == null || arguments == null)
+				return;
 			
 			stmt = conn.createStatement();
 
@@ -87,6 +91,18 @@ checkInput: 	{
 					
 				}
 			}
+			else if(command.equals(Command.FETCHIDS.toString()))
+			{
+				rs = stmt.executeQuery("SELECT * FROM userdata WHERE " + dbUserKey + " = '" + arguments[0] + "';");
+				rs.next();
+				rs = rs.getArray(dbFIDKey).getResultSet();
+				int i = 0;
+				while(rs.next())
+				{
+					reply += rs.getInt(i) + "\n";
+					++i;
+				}
+			}
 			else
 			{
 				reply = "UNKNOWN COMMAND";
@@ -107,6 +123,6 @@ checkInput: 	{
     }
 
     public enum Command {
-    	LOGIN, REGISTER
+    	LOGIN, REGISTER, FETCHIDS
     }
 }
