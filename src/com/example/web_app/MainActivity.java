@@ -20,13 +20,6 @@ import com.facebook.Session;
 public class MainActivity extends Activity implements contextSwitcher {
 	
 	public Context context;
-	public EditText editUsername;
-	public EditText editPassword;
-	public CheckBox cBox;
-
-	
-	
-	//User preferences for remembering username and password
 	public static final String PREFS_NAME = "UserPrefs";
 	private static final String PREF_USERNAME = "username";
 	private static final String PREF_PASSWORD = "password";
@@ -47,13 +40,13 @@ public class MainActivity extends Activity implements contextSwitcher {
 		String username = pref.getString(PREF_USERNAME, null);
 		String password = pref.getString(PREF_PASSWORD, null);
 		
-		editUsername = (EditText) findViewById(R.id.editUsername);
-		editPassword = (EditText) findViewById(R.id.editPassword);
-		cBox = (CheckBox) findViewById(R.id.rememberUser);
+		EditText eUser = (EditText) findViewById(R.id.editUsername);
+		EditText ePass = (EditText) findViewById(R.id.editPassword);
+		CheckBox cBox = (CheckBox) findViewById(R.id.rememberUser);
 
 		if (username != null && password != null) {
-			editUsername.setText(username);
-			editPassword.setText(password);
+			eUser.setText(username);
+			ePass.setText(password);
 			cBox.setChecked(true);
 		}
 		
@@ -67,14 +60,44 @@ public class MainActivity extends Activity implements contextSwitcher {
 		return true;
 	}
 	
-	//Called by login button
 	public void getAccountInfo(View view) throws InterruptedException {
-		String usernameString = editUsername.getText().toString();
-		String passwordString = editPassword.getText().toString();
+		EditText username = (EditText) findViewById(R.id.editUsername);
+		EditText password = (EditText) findViewById(R.id.editPassword);
+		
+		String usernameString = username.getText().toString();
+		String passwordString = password.getText().toString();
+		
 		
 		Request request = new Request(Command.LOGIN, new String[] {usernameString,passwordString});
 		ServerRequest servReq = new ServerRequest(this);
+		
 		servReq.execute(request);
+		
+		/*String reply = servReq.getReply();
+		
+		Context context = getApplicationContext();
+		int duration = Toast.LENGTH_LONG;
+
+		Toast toast = Toast.makeText(context, reply, duration);
+		toast.show();*/
+		
+		//Intent intent = new Intent(this, HomeScreenActivity.class);
+		//startActivity(intent);
+		
+		
+		/*if (!accountCheck(usernameString, passwordString)) {
+			Intent intent  = getIntent();
+			finish();
+			startActivity(intent);
+			
+		} else {
+		
+			Intent intent = new Intent(this, HomeScreenActivity.class);
+		
+			intent.putExtra(USERNAME, usernameString);
+			startActivity(intent);
+		}*/
+		
 		
 	}
 	
@@ -83,13 +106,31 @@ public class MainActivity extends Activity implements contextSwitcher {
 		Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
 	}
 	
-	//Called by register button
-	public void register(View view) {
-		Intent intent = new Intent(this, RegisterActivity.class);
-		startActivity(intent);
+	public boolean accountCheck(String username, String password) {
+		
+		//TODO implement a call to the database to check details
+		
+		/*if (!username.equals("Rob")) {
+			Toast.makeText(getApplicationContext(),
+					"No account exists under that username", Toast.LENGTH_SHORT);
+			return false;
+		}
+		if (!username.equals("hello")) {
+			Toast.makeText(getApplicationContext(),
+					"Incorrect Password", Toast.LENGTH_SHORT);
+			return false;
+		} */
+		return true;
+	
 	}
 	
-	//Called by ServerRequest on post execution
+	public void register(View view) {
+		
+		Intent intent = new Intent(this, RegisterActivity.class);
+		startActivity(intent);
+	
+	}
+	
 	@Override
 	public void cSwitch(String result) {
 		Log.v("Message from server", result);
@@ -106,22 +147,15 @@ public class MainActivity extends Activity implements contextSwitcher {
 		}
 	}
 	
-	//Called by "Remember me" check box
 	public void rememberUser(View view) {
 		
-		//Get the username and password that has been input
-		//Store current username and password in shared preferences
-		if(cBox.isChecked()){
-			String usernameString = editUsername.getText().toString();
-			String passwordString = editPassword.getText().toString();
-			getSharedPreferences(PREFS_NAME,MODE_PRIVATE).edit().putString(PREF_USERNAME, usernameString ).putString(PREF_PASSWORD, passwordString ).commit();
-		} else {
-			getSharedPreferences(PREFS_NAME,MODE_PRIVATE).edit().putString(PREF_USERNAME, null).putString(PREF_PASSWORD, null ).commit();
-
-		}
+		EditText username = (EditText) findViewById(R.id.editUsername);
+		EditText password = (EditText) findViewById(R.id.editPassword);
+		String usernameString = username.getText().toString();
+		String passwordString = password.getText().toString();
 		
-		
-		
+		getSharedPreferences(PREFS_NAME,MODE_PRIVATE).edit().putString(PREF_USERNAME, usernameString ).commit();
+		getSharedPreferences(PREFS_NAME,MODE_PRIVATE).edit().putString(PREF_PASSWORD, passwordString ).commit();
 	}
 
 }

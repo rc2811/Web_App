@@ -97,12 +97,8 @@ public class PickerActivity extends FragmentActivity {
 	    
 	    if (FRIEND_PICKER.equals(getIntent().getData())) {
 	        if (friendPickerFragment != null) {
-	        	Intent intent = new Intent(this, SlideshowActivity.class);
-	        	for (int i = 0; i < friendPickerFragment.getSelection().size(); i++) {
-		        	
-		        	intent.putExtra("family", friendPickerFragment.getSelection().get(i).getId());
-		        	Log.i("picker", "put extra friend " + friendPickerFragment.getSelection().get(i).getId());
-	        	}
+	        	Intent intent = new Intent(this, HomeScreenActivity.class);
+
 	    	    startActivity(intent);
 
 	        }   

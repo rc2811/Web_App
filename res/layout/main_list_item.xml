@@ -22,5 +22,6 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeight"
+    android:textSize="40sp"
     android:paddingLeft="6dip"
     android:textAppearance="?android:attr/textAppearanceMedium" />

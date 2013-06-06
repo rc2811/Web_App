@@ -6,13 +6,21 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
+
+import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.annotation.TargetApi;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class HomeScreenActivity extends ListActivity {
 	
     private static final String FROM_TITLE = "title";
@@ -27,8 +35,9 @@ public class HomeScreenActivity extends ListActivity {
 		HOME_SCREEN_MAP.put("My Family", MyFamilyActivity.class.getName());
 		HOME_SCREEN_MAP.put("Settings", SettingsActivity.class.getName());
 		HOME_SCREEN_MAP.put("Logout", MainActivity.class.getName());
-		HOME_SCREEN_MAP.put("DownloadJSON", ParseJSON.class.getName());
 	}
+	
+	private UiLifecycleHelper uiHelper;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +45,24 @@ public class HomeScreenActivity extends ListActivity {
 		setListAdapter(new SimpleAdapter(this, getOptions(),
 				R.layout.main_list_item, new String[] { FROM_TITLE },
 				new int[] { android.R.id.text1 }));
+		
+		Session session = Session.getActiveSession();
+		
+		if (session == null) {
+			if (savedInstanceState != null) {
+				session = Session.restoreSession(getApplicationContext(), null, callback, savedInstanceState);
+			} 
+			if (session == null) {
+				session = new Session(getApplicationContext());
+			}
+			Session.setActiveSession(session);
+		}
+		
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+		StrictMode.setThreadPolicy(policy);
+		
+		uiHelper = new UiLifecycleHelper(this, callback);
+		uiHelper.onCreate(savedInstanceState);
 		
 	}
 
@@ -63,5 +90,52 @@ public class HomeScreenActivity extends ListActivity {
         Intent intent = (Intent) map.get(INTENT_KEY);
         startActivity(intent);
     }
+    
+	private Session.StatusCallback callback = new Session.StatusCallback() {
+	    @Override
+	    public void call(Session session, SessionState state, Exception exception) {
+	        onSessionStateChange(session, state, exception);
+	    }
+	};
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		uiHelper.onResume();
+	}
+	
+	protected void onSessionStateChange(Session session2, SessionState state,
+			Exception exception) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
 
+	@Override
+	public void onPause() {
+	    super.onPause();
+	    uiHelper.onPause();
+	}   
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    super.onActivityResult(requestCode, resultCode, data);
+	    uiHelper.onActivityResult(requestCode, resultCode, data);
+	}   
+
+	@Override
+	public void onDestroy() {
+	    super.onDestroy();
+	    uiHelper.onDestroy();
+	}   
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+	    super.onSaveInstanceState(outState);
+	    uiHelper.onSaveInstanceState(outState);
+	}
 }
+
+
+

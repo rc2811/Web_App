@@ -1,5 +1,8 @@
 package com.example.web_app;
 
+import java.util.Arrays;
+import java.util.List;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Intent;
@@ -28,6 +31,9 @@ public class SettingsActivity extends FragmentActivity {
 	private MenuItem settings;
 	
 	private static final String TAG = "SettingsFragment";
+	
+	private static final List<String> PERMISSIONS = Arrays.asList("friends_birthday", "user_photos", "friends_photos"
+			,"friends_education_history, about_me");
 
 	@SuppressLint("NewApi")
 	@Override
@@ -36,6 +42,7 @@ public class SettingsActivity extends FragmentActivity {
 		
 		uiHelper = new UiLifecycleHelper(this, callback);
 		uiHelper.onCreate(savedInstanceState);
+
 		
 		
 		setContentView(R.layout.activity_settings);
@@ -45,6 +52,9 @@ public class SettingsActivity extends FragmentActivity {
 	    fragments[SELECTION] = fm.findFragmentById(R.id.selectionFragment);
 	    fragments[SELECTION] = fm.findFragmentById(R.id.selectionFragment);
 	    fragments[SETTINGS] = fm.findFragmentById(R.id.userSettingsFragment);
+	    
+
+	    
 
 	    FragmentTransaction transaction = fm.beginTransaction();
 	    for(int i = 0; i < fragments.length; i++) {
@@ -80,12 +90,14 @@ public class SettingsActivity extends FragmentActivity {
 	public void onPause() {
 	    super.onPause();
 	    uiHelper.onPause();
+  
 	    isResumed = false;
 	}
 	
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
 	    // Only make changes if the activity is visible
 	    if (isResumed) {
+
 	        FragmentManager manager = getSupportFragmentManager();
 	        // Get the number of entries in the back stack
 	        int backStackSize = manager.getBackStackEntryCount();
