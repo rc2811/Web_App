@@ -2,13 +2,14 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.sql.*;
+import java.util.Arrays;
 
 
 public class Servlet extends HttpServlet {
 	
 	private static final String dbPassKey = "password";
 	private static final String dbUserKey = "username";
-	private static final String dbFIDKey = "friendIDs";
+	private static final String dbFIDKey = "friendids";
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -41,7 +42,7 @@ public class Servlet extends HttpServlet {
 			
 			String command = request.getParameter("command");
 			String[] arguments = request.getParameterValues("args");
-			String reply = "";
+			String reply = "UNDETECTED ERROR";
 			
 			if(command == null || arguments == null)
 				return;
@@ -95,16 +96,36 @@ checkInput: 	{
 			{
 				rs = stmt.executeQuery("SELECT * FROM userdata WHERE " + dbUserKey + " = '" + arguments[0] + "';");
 				rs.next();
-				rs = rs.getArray(dbFIDKey).getResultSet();
-				int i = 0;
-				while(rs.next())
+				Integer[] array = (Integer[])rs.getArray(dbFIDKey).getArray();
+
+				for(int i : array)
 				{
-					reply += rs.getInt(i) + "\n";
-					++i;
+					reply += i + ":";
 				}
+			}
+			else if(command.equals(Command.INSERTIDS.toString()))
+			{
+				rs = stmt.executeQuery("SELECT * FROM userdata WHERE " + dbUserKey + " = '" + arguments[0] + "';");
+				if(!rs.next())
+				{
+					pstmt = conn.prepareStatement("INSERT into userdata VALUES('"+ arguments[0] + "', '" + prepareToPrintWithRemoval(arguments) + "');");
+				}
+				else
+				{
+					rs = stmt.executeQuery("SELECT * FROM userdata WHERE " + dbUserKey + " = '" + arguments[0] + "';");
+					rs.next();
+					Integer[] array = (Integer[])rs.getArray(dbFIDKey).getArray();
+					
+					pstmt = conn.prepareStatement("UPDATE userdata" + " SET " + dbFIDKey + " = " +
+												"array_cat(" + prepareToPrint(array) +
+														"," + prepareToPrintWithRemoval(arguments) + ") WHERE " + dbUserKey + " = '" + arguments[0] + "';");
+				}
+				pstmt.executeUpdate();
+				reply = "OK";
 			}
 			else
 			{
+
 				reply = "UNKNOWN COMMAND";
 			}
 			
@@ -116,13 +137,23 @@ checkInput: 	{
 			writer.write(reply);
 			writer.flush();
 			writer.close();
-        
+			
 		} catch (SQLException e) {
 				e.printStackTrace();
 		}
     }
+    
+    private String prepareToPrintWithRemoval(Object[] args)
+    {
+    	return prepareToPrint(Arrays.copyOfRange(args, 1, args.length));
+    }
+    
+    private String prepareToPrint(Object[] args)
+    {
+    	return "ARRAY" + Arrays.toString(args);
+    }
 
     public enum Command {
-    	LOGIN, REGISTER, FETCHIDS
+    	LOGIN, REGISTER, FETCHIDS, INSERTIDS, ADDFBID, SENDMESSAGETO, GETMESSAGES
     }
 }
