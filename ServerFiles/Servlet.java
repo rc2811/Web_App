@@ -10,6 +10,8 @@ public class Servlet extends HttpServlet {
 	private static final String dbPassKey = "password";
 	private static final String dbUserKey = "username";
 	private static final String dbFIDKey = "friendids";
+	private static final String dbFBKey = "fbid";
+	private static final String dbMessageKey = "notes";
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -23,6 +25,12 @@ public class Servlet extends HttpServlet {
 			 conn = DriverManager.getConnection (
 	    	"jdbc:postgresql://db.doc.ic.ac.uk/g1227128_u",
 			"g1227128_u", "lmX5xgXehM" );
+			 
+	//		 Statement stmt = conn.createStatement();
+//			 ResultSet rs = stmt.executeQuery("SELECT " + dbMessageKey + " FROM userdata WHERE " + dbUserKey + " = 'matt';");
+//			 rs.next();
+//				String[] a = (String[]) rs.getArray(dbMessageKey).getArray();
+//				System.out.println(a[0]);
 
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -59,7 +67,7 @@ public class Servlet extends HttpServlet {
 					rs = stmt.executeQuery("SELECT * FROM logins WHERE " + dbUserKey + " = '" + arguments[0] + "';");
 					rs.next();
 					
-					if(rs.getString(dbPassKey).equals(arguments[1]))
+					if(BCrypt.checkpw(arguments[1], rs.getString(dbPassKey)))
 					{
 						reply = "OK";
 					}
@@ -85,7 +93,7 @@ checkInput: 	{
 						}
 					}
 					
-				pstmt = conn.prepareStatement("INSERT into logins VALUES('"+ arguments[0] + "', '" + arguments[1] + "', " + Integer.parseInt(arguments[2]) + ");");
+				pstmt = conn.prepareStatement("INSERT into logins VALUES('"+ arguments[0] + "', '" + BCrypt.hashpw(arguments[1], BCrypt.gensalt()) + "', " + Integer.parseInt(arguments[2]) + ");");
 
 				pstmt.executeUpdate();
 				reply = "OK";
@@ -97,6 +105,8 @@ checkInput: 	{
 				rs = stmt.executeQuery("SELECT * FROM userdata WHERE " + dbUserKey + " = '" + arguments[0] + "';");
 				rs.next();
 				Integer[] array = (Integer[])rs.getArray(dbFIDKey).getArray();
+				
+				reply = "";
 
 				for(int i : array)
 				{
@@ -109,23 +119,68 @@ checkInput: 	{
 				if(!rs.next())
 				{
 					pstmt = conn.prepareStatement("INSERT into userdata VALUES('"+ arguments[0] + "', '" + prepareToPrintWithRemoval(arguments) + "');");
+					pstmt.executeUpdate();
+				}
+				else if(arguments.length > 1)
+				{
+					pstmt = conn.prepareStatement("UPDATE userdata SET " + dbFIDKey + " = " +
+												dbFIDKey + " || " + prepareToPrintWithRemoval(arguments) +
+												" WHERE " + dbUserKey + " = '" + arguments[0] + "';");
+					pstmt.executeUpdate();
+				}
+				reply = "OK";
+			}
+			else if(command.equals(Command.ADDFBID.toString()))
+			{
+				rs = stmt.executeQuery("SELECT " + dbFBKey + " FROM logins WHERE " + dbUserKey + " = '" + arguments[0] + "';");
+				rs.next();
+				
+				if(rs.getInt(dbFBKey) > 0)
+				{
+					reply = "CANNOT ADD FACEBOOK ID, ONE ALREADY EXISTS";
 				}
 				else
 				{
-					rs = stmt.executeQuery("SELECT * FROM userdata WHERE " + dbUserKey + " = '" + arguments[0] + "';");
-					rs.next();
-					Integer[] array = (Integer[])rs.getArray(dbFIDKey).getArray();
-					
-					pstmt = conn.prepareStatement("UPDATE userdata" + " SET " + dbFIDKey + " = " +
-												"array_cat(" + prepareToPrint(array) +
-														"," + prepareToPrintWithRemoval(arguments) + ") WHERE " + dbUserKey + " = '" + arguments[0] + "';");
+					pstmt = conn.prepareStatement("UPDATE logins SET " + dbFBKey + " = " + Integer.parseInt(arguments[1]) + " WHERE " + dbUserKey + " = '" + arguments[0] + "';");
+					pstmt.executeUpdate();
+					reply = "OK";
 				}
-				pstmt.executeUpdate();
-				reply = "OK";
+				
+			}
+			else if(command.equals(Command.SENDMESSAGETO.toString()))
+			{
+				rs = stmt.executeQuery("SELECT " + dbUserKey + " FROM logins WHERE " + dbFBKey + " = '" + arguments[1] + "';");
+				if(rs.next())
+				{
+					String recipient = rs.getString(dbUserKey);
+					
+					pstmt = conn.prepareStatement("UPDATE userdata" + " SET " + dbMessageKey + " = " +
+							dbMessageKey + " || " + "ROW( '" + arguments[0] + "' , '" + arguments[2] + "' )::fridgenote" +
+							" WHERE " + dbUserKey + " = '" + recipient + "';");
+					pstmt.executeUpdate();
+					reply = "OK";
+				}
+				else
+				{
+					reply = "CANNOT SEND MESSAGE, USER DOES NOT EXIST";
+				}
+			}
+			else if(command.equals(Command.GETMESSAGES.toString()))
+			{
+				rs = stmt.executeQuery("SELECT " + dbMessageKey + " FROM userdata WHERE " + dbUserKey + " = '" + arguments[0] + "';");
+				if(rs.next())
+				{
+					reply = "YOU HAVE NO NOTES";
+				}
+				else
+				{
+					String[] a = (String[]) rs.getArray(dbMessageKey).getArray();
+					System.out.println(a[0]);
+					//rs.getArray(dbMessageKey).getArray();
+				}
 			}
 			else
 			{
-
 				reply = "UNKNOWN COMMAND";
 			}
 			
