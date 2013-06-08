@@ -1,45 +1,38 @@
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:gravity="center"
     android:id="@+id/family_member_layout"
 	>
 
-    <ImageView android:id="@+id/profile_image"
-        			android:layout_width="300dp"
-        			android:layout_height="300dp"
-        			android:contentDescription="image"
-        			android:paddingLeft="10dp"
-        			android:paddingTop="10dp" >   
-        				
-    </ImageView>
-    
-    <TextView android:id="@+id/profile_name"
-                	android:layout_below="@id/profile_image"
-					android:textSize="30sp"
-					android:layout_height="70dp"
-        	 		android:layout_width = "match_parent"
-        	  		android:background="@drawable/back" >
-     </TextView>
-    
-     <TextView android:id="@+id/profile_birthday"
-					android:textSize="30sp"
-					android:layout_height="70dp"
-        	  		android:layout_below="@id/profile_name"
-        	 		android:layout_width = "match_parent"
-        	        android:background="@drawable/back" >
-      </TextView>
         
-        <GridView 
-            android:id="@+id/profile_gridview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:horizontalSpacing="5dp"
-            android:verticalSpacing="5dp"
-            android:numColumns="auto_fit" >
-            
-        </GridView>
+       <ImageView
+           android:id="@+id/profile_img"
+           android:layout_width="300dp"
+           android:layout_height="300dp"
+          	android:src="@drawable/title2"
+			android:paddingBottom="20dp"
+			android:onClick="displayBig"
+            />
+
+    
+<GridView
+    android:id="@+id/grid_view_photos"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:numColumns="2"
+    android:gravity="center"
+    android:stretchMode="columnWidth"
+    
+     >
 
 
-</RelativeLayout>
+    
+
+</GridView>
+
+
+
+</TableLayout>

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
@@ -73,11 +74,55 @@ public class MainActivity extends Activity implements contextSwitcher {
 		
 		servReq.execute(request);
 		
+		/*String reply = servReq.getReply();
+		
+		Context context = getApplicationContext();
+		int duration = Toast.LENGTH_LONG;
+
+		Toast toast = Toast.makeText(context, reply, duration);
+		toast.show();*/
+		
+		//Intent intent = new Intent(this, HomeScreenActivity.class);
+		//startActivity(intent);
+		
+		
+		/*if (!accountCheck(usernameString, passwordString)) {
+			Intent intent  = getIntent();
+			finish();
+			startActivity(intent);
+			
+		} else {
+		
+			Intent intent = new Intent(this, HomeScreenActivity.class);
+		
+			intent.putExtra(USERNAME, usernameString);
+			startActivity(intent);
+		}*/
+		
+		
 	}
 	
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+	}
+	
+	public boolean accountCheck(String username, String password) {
+		
+		//TODO implement a call to the database to check details
+		
+		/*if (!username.equals("Rob")) {
+			Toast.makeText(getApplicationContext(),
+					"No account exists under that username", Toast.LENGTH_SHORT);
+			return false;
+		}
+		if (!username.equals("hello")) {
+			Toast.makeText(getApplicationContext(),
+					"Incorrect Password", Toast.LENGTH_SHORT);
+			return false;
+		} */
+		return true;
+	
 	}
 	
 	public void register(View view) {
@@ -112,6 +157,18 @@ public class MainActivity extends Activity implements contextSwitcher {
 		
 		getSharedPreferences(PREFS_NAME,MODE_PRIVATE).edit().putString(PREF_USERNAME, usernameString ).commit();
 		getSharedPreferences(PREFS_NAME,MODE_PRIVATE).edit().putString(PREF_PASSWORD, passwordString ).commit();
+	}
+	
+	@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    super.onKeyDown(keyCode, event);
+        switch(keyCode)
+        {
+        case KeyEvent.KEYCODE_BACK:
+   
+            return false;
+        }
+        return false;
 	}
 
 }

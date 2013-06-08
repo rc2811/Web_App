@@ -67,7 +67,7 @@ public class ImageAdapter extends BaseAdapter implements ListAdapter {
             imageView.setLayoutParams(new GridView.LayoutParams(600, 600));
         	imageView.setImageDrawable(s);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        //    imageView.setPadding(8, 8, 8, 8);
+
         } else {
             imageView = (ImageView) convertView;
         }

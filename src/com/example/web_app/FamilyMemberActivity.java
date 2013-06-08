@@ -2,6 +2,7 @@ package com.example.web_app;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.json.JSONObject;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -27,8 +29,15 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.facebook.HttpMethod;
 import com.facebook.Request;
@@ -43,12 +52,19 @@ public class FamilyMemberActivity extends Activity {
 																 "friends_education_history", "friends_photos");
 	
 	private String TAG = "FamilyMemberActivity";
-	private String name;
+	private List<String> photoURLS;
+	private String currentProfilePicURL;
+	
+	
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_family_member);
+		
+		Intent intent = getIntent();
+		String id = intent.getStringExtra("fb_id");
 		
 		setTitle("Family Member");
 		
@@ -59,17 +75,15 @@ public class FamilyMemberActivity extends Activity {
 		session1.openForRead(new Session.OpenRequest(this));
 
 		session1.requestNewReadPermissions(new Session.NewPermissionsRequest(this, PERMISSIONS));
-			
-			
+
 		Session.setActiveSession(session1);
 
 
 		if (session1 != null && session1.isOpened()) {
 			Log.i(TAG, "session ok");
-			getUserData("746975053");
-			
-			
-			
+			getUserData(id);
+			getUserPhotos(id);
+
 		} else {
 			Log.d(TAG, "no session");
 		}
@@ -79,8 +93,8 @@ public class FamilyMemberActivity extends Activity {
 	
 	private void getUserData(String id) {
 		
-		String fqlQuery = "select name, birthday, current_address, education, pic_big from user where uid = " + id;
-		//		"access_token = " + session.getAccessToken();
+		String fqlQuery = "select name, birthday, hometown_location, work, education, pic_big from user where uid = " + id;
+
 		Bundle params = new Bundle();
 		params.putString("q", fqlQuery);
 	
@@ -105,50 +119,120 @@ public class FamilyMemberActivity extends Activity {
 		        	try {
 						data = j.getJSONArray("data");
 				        if (data != null) {
-				        	Log.i(TAG, data.toString());
-				        	//data.getJSONArray(0);
-				        	Log.i(TAG, data.getJSONObject(data.length() -1).toString());
-				        	Log.i(TAG, data.getJSONObject(data.length() -1).get("pic_big").toString());
-				        	
-				        	String url = data.getJSONObject(0).get("pic_big").toString();
-				        	String name = data.getJSONObject(0).getString("name").toString();
-				        	String birthday = data.getJSONObject(0).getString("birthday").toString();
-				        	
-							Drawable d = drawable_from_url(url, "img");
-							
-							if (d == null) {
-								Log.i(TAG, "no drawable");
-							} else {
-						
-								//Bitmap bitmap = roundCorner(drawableToBitmap(d), 20);
-							
-								
-								ImageView iv = (ImageView) findViewById(R.id.profile_image);
-								iv.setBackground(d);
-								
-							} 
-							if (name == null) {
-								Log.i(TAG, "no name");
-							
-							} else {
-								
-								TextView textView = (TextView) findViewById(R.id.profile_name);
-								textView.setText(name);
-	
-							} 
-							if (birthday == null) {
-								Log.i(TAG, "no birthday");
-							
-							} else {
-								
-								TextView textView = (TextView) findViewById(R.id.profile_birthday);
-								textView.setText(birthday);
-	
-							}
-							
-				        	
-				        	
+				        	parseData(data);
+
 				        }
+		        	} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} finally {
+		        		
+		        	}
+		        }
+		        }
+			});
+		Request.executeBatchAsync(request);
+		
+		}
+	
+				private void parseData(JSONArray data) throws JSONException, MalformedURLException, IOException {
+					Log.i(TAG, data.toString());
+					Log.i(TAG, data.get(0).toString());
+					JSONObject j = (JSONObject) data.getJSONObject(0);
+					
+					
+					if (j != null) {
+						
+						Log.i(TAG, "Ok object");
+					
+						String pic_url = j.getString("pic_big");
+						String birthday = j.getString("birthday");
+						JSONArray education = j.getJSONArray("education");
+						String name = j.getString("name");
+						String hometown = j.getString("hometown_location");
+						JSONArray work = j.getJSONArray("work");
+						
+						Log.i(TAG, "Name: " + name);
+						
+						if (!pic_url.isEmpty() && !pic_url.equals(null)) {
+							Drawable d = drawable_from_url(pic_url, "src");
+							currentProfilePicURL = pic_url;
+							
+							if (d != null) {
+								ImageView iv = (ImageView) findViewById(R.id.profile_img);
+								iv.setImageDrawable(d);
+
+								
+							}
+						} 
+						
+						if (!name.equals("null")) {
+							TextView textView = new TextView(this);
+							textView.setText("Name: " + name);
+							Log.i(TAG, "Got name " + name);
+							
+							TableLayout layout = (TableLayout) findViewById(R.id.family_member_layout);
+							layout.addView(textView);
+							
+							setTitle(name);
+							
+						}
+						
+						if ( !hometown.equals("null")) {
+							
+							Log.i(TAG, hometown.length() + "");
+							TextView textView = new TextView(this);
+
+							textView.setText("Hometown: " + hometown);	
+							Log.i(TAG, "Got hometown " + name);
+							
+							TableLayout layout = (TableLayout) findViewById(R.id.family_member_layout);
+							layout.addView(textView);
+						}
+						
+						if (!birthday.equals("null")) {
+
+							TextView textView = new TextView(this);
+							textView.setText("Birthday: " + birthday);
+							Log.i(TAG, "Got birthday " + name);
+							
+							TableLayout layout = (TableLayout) findViewById(R.id.family_member_layout);
+							layout.addView(textView);
+						}
+					
+					}
+							
+					
+				}
+				
+				
+	private void getUserPhotos(String id) {
+					
+		String fqlQuery = "select src, src_big from photo where owner = " + id;
+
+		Bundle params = new Bundle();
+		params.putString("q", fqlQuery);
+
+		Session session = Session.getActiveSession();
+		Request request = new Request(session, 
+			"/fql", 
+			params, 
+			HttpMethod.GET, 
+			new Request.Callback(){ 
+
+				@Override
+				public void onCompleted(Response response) {
+					Log.i(TAG, "Got results: " + response.toString());
+
+					try {
+						JSONArray data = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
+						parsePhotos(data);
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -159,13 +243,67 @@ public class FamilyMemberActivity extends Activity {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-		        }
-		    }
-		});
+						        
+				}
+
+			});
+					
 		Request.executeBatchAsync(request);
+					
+	}
+
+				
+	private void parsePhotos(JSONArray data) throws JSONException, MalformedURLException, IOException {
 		
+		Log.i(TAG, data.getJSONObject(0).toString());
+		List<Drawable> profile_pics = new ArrayList<Drawable>();
+		
+		photoURLS = new ArrayList<String>();
+		
+		for (int i = 0; i < 20; i++) {
+			
+			String url = data.getJSONObject(i).getString("src");
+			
+			String big_img_url  = data.getJSONObject(i).getString("src_big");
+			
+			Drawable d = drawable_from_url(url, "src");
+			
+			profile_pics.add(d);
+			photoURLS.add(big_img_url);
+			
+			
+		}
+								
+		final GridView gridView = (GridView) findViewById(R.id.grid_view_photos);
+
+		gridView.setAdapter(new ImageAdapter(this, profile_pics));
+
+		gridView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+
+				String url = photoURLS.get(position);
+				
+				Drawable d;
+				try {
+					d = drawable_from_url(url, "src");
+					ImageView profileImg = (ImageView) findViewById(R.id.profile_img);
+					profileImg.setImageDrawable(d);
+					currentProfilePicURL = url;
+					
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		}); 
+							
 	}
 	
+
 	public static Bitmap drawableToBitmap (Drawable drawable) {
 
 	    Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Config.ARGB_8888);
@@ -225,6 +363,16 @@ public class FamilyMemberActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.family_member, menu);
 		return true;
+	}
+	
+ 
+	public void displayBig(View view) {
+		
+		Intent intent = new Intent(this, FullScreenImageActivity.class);
+		intent.putExtra("url", currentProfilePicURL);
+		
+		startActivity(intent);
+		
 	}
 
 }

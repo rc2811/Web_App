@@ -1,17 +1,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:id="@+id/horizontalScroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/horizontalScroll"
-	>
+    android:gravity="center"
+    android:orientation="horizontal" >
 
-    <ImageView android:id="@+id/slideshow_image"
-        			android:layout_width="fill_parent"
-        			android:layout_height="fill_parent"
-        			android:contentDescription="image">   
-        					
-        
-    </ImageView>
-
+    <ImageView
+        android:id="@+id/slideshow_image"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:contentDescription="image"
+        android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+        android:layout_gravity="center" />
 
 </LinearLayout>

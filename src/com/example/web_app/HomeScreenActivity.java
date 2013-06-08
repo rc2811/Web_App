@@ -6,23 +6,24 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.annotation.TargetApi;
-import android.app.ListActivity;
-import android.content.Intent;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.StrictMode;
-import android.view.View;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
-
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 
+import android.os.Build;
+import android.os.Bundle;
+import android.os.StrictMode;
+import android.annotation.TargetApi;
+import android.app.ListActivity;
+import android.content.Intent;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
+
 @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-public class HomeScreenActivity extends ListActivity implements contextSwitcher {
+public class HomeScreenActivity extends ListActivity {
 	
     private static final String FROM_TITLE = "title";
     private static final String TITLE_KEY = "title";
@@ -46,24 +47,10 @@ public class HomeScreenActivity extends ListActivity implements contextSwitcher 
 		setListAdapter(new SimpleAdapter(this, getOptions(),
 				R.layout.main_list_item, new String[] { FROM_TITLE },
 				new int[] { android.R.id.text1 }));
-		
-		Session session = Session.getActiveSession();
-		
-		if (session == null) {
-			if (savedInstanceState != null) {
-				session = Session.restoreSession(getApplicationContext(), null, callback, savedInstanceState);
-			} 
-			if (session == null) {
-				session = new Session(getApplicationContext());
-			}
-			Session.setActiveSession(session);
-		}
-		
+			
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 		StrictMode.setThreadPolicy(policy);
-		
-		uiHelper = new UiLifecycleHelper(this, callback);
-		uiHelper.onCreate(savedInstanceState);
+
 		
 	}
 
@@ -87,77 +74,47 @@ public class HomeScreenActivity extends ListActivity implements contextSwitcher 
     @Override
     @SuppressWarnings("unchecked")
     protected void onListItemClick(ListView listView, View view, int position, long id) {
+    	
         Map<String, Object> map = (Map<String, Object>) listView.getItemAtPosition(position);
-        Intent intent = (Intent) map.get(INTENT_KEY);
-        startActivity(intent);
+        if (map.get(TITLE_KEY).equals("Logout") || map.get(TITLE_KEY).equals("Settings")) {
+        	
+			Intent intent = (Intent) map.get(INTENT_KEY);
+			startActivity(intent);
+        	
+        } else {
+    	
+        	Session session = Session.getActiveSession();
+    	
+        	if (session != null) {
+    		
+        		List<String> permissions = session.getPermissions();
+
+        		Intent intent = (Intent) map.get(INTENT_KEY);
+        		startActivity(intent);
+
+        	} else {
+				Toast.makeText(this, "Select the 'Settings' option to log in with Facebook first.", Toast.LENGTH_SHORT).show();
+        	}
+
+        }
     }
     
-	private Session.StatusCallback callback = new Session.StatusCallback() {
-	    @Override
-	    public void call(Session session, SessionState state, Exception exception) {
-	        onSessionStateChange(session, state, exception);
-	    }
-	};
-	
+    
 	@Override
-	public void onResume() {
-		super.onResume();
-		uiHelper.onResume();
-	}
-	
-	protected void onSessionStateChange(Session session2, SessionState state,
-			Exception exception) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
-
-	@Override
-	public void onPause() {
-	    super.onPause();
-	    uiHelper.onPause();
-	}   
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    super.onActivityResult(requestCode, resultCode, data);
-	    uiHelper.onActivityResult(requestCode, resultCode, data);
-	}   
-
-	@Override
-	public void onDestroy() {
-	    super.onDestroy();
-	    uiHelper.onDestroy();
-	}   
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-	    super.onSaveInstanceState(outState);
-	    uiHelper.onSaveInstanceState(outState);
-	}
-	
-	public void requestIDs() {
-		Request request = new Request(Command.FETCHIDS, new String[] {"matt"});
-		ServerRequest servReq = new ServerRequest(this);
-		servReq.execute(request);
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    super.onKeyDown(keyCode, event);
+        switch(keyCode)
+        {
+        case KeyEvent.KEYCODE_BACK:
+        	Toast.makeText(this, "Select the Logout button to log out", Toast.LENGTH_SHORT).show();
+         
+            return false;
+        }
+        return false;
 	}
 
-	@Override
-	public void cSwitch(String s) {
-		TextView textView = new TextView(this);
-		
-		String[] reply = s.split(";");
-		String result = "";
-		
-		for(String x : reply) {
-			result += x;
-			result += "\n";
-		}
-		
-		textView.setText(result);
-		setContentView(textView);
-	}
+	
 }
+
 
 

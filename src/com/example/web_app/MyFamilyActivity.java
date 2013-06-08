@@ -41,6 +41,7 @@ import android.widget.AdapterView.OnItemClickListener;
 public class MyFamilyActivity extends Activity {
 	
 	private static final List<String> PERMISSIONS = Arrays.asList("friends_birthday", "user_photos", "friends_photos");
+	private String[] ids = {"746975053", "1767412253", "1384204844", "672863965", "100002592216325"};
 	
 	private String TAG = "MyFamilyActivity";
 	List<Drawable> profile_pics;
@@ -52,31 +53,17 @@ public class MyFamilyActivity extends Activity {
 		setContentView(R.layout.grid_layout);
 		setTitle("Your Family");
 		profile_pics = new ArrayList<Drawable>();
-		
-		Session session = Session.getActiveSession();
 
-	
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 		StrictMode.setThreadPolicy(policy);
-		
-	//	uiHelper = new UiLifecycleHelper(this, callback);
-	//	uiHelper.onCreate(savedInstanceState);
-		
-		Log.i(TAG, "current permissions " + session.getPermissions().toString());
-		Log.i(TAG, "permissions needed " + PERMISSIONS.toString());
 		
 		Session session1 = new Session(this);
 		session1.openForRead(new Session.OpenRequest(this));
 
-			session1.requestNewReadPermissions(new Session.NewPermissionsRequest(this, PERMISSIONS));
+		session1.requestNewReadPermissions(new Session.NewPermissionsRequest(this, PERMISSIONS));
 			
 			
 		Session.setActiveSession(session1);
-	
-		
-	//	List<String> current_permissions = session.getPermissions();
-	//	
-		
 
 		if (session1 != null && session1.isOpened()) {
 			Log.i(TAG, "session ok");
@@ -97,17 +84,11 @@ public class MyFamilyActivity extends Activity {
 	        }
 	    });
 	    
-		session.close();
-	    
-		
 	}
 
 	
 	private void getPhotos() {
-		
-		
-		String[] ids = {"746975053", "1767412253", "1384204844", "672863965", "100002592216325"};
-		
+
 		for (int i = 0; i < 5; i++) {
 		
 		String fqlQuery = "select pic_big from user where uid = " + ids[i];
@@ -184,20 +165,11 @@ public class MyFamilyActivity extends Activity {
 	   return Drawable.createFromStream(((java.io.InputStream)
 	      new java.net.URL(url).getContent()), src_name);
 	}
-
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.my_family, menu);
-		return true;
-	}
 	
 	
 	public void selectFamilyMember(int position, GridView view) {
-        int pic_id = view.getId();
 		Intent intent = new Intent(this, FamilyMemberActivity.class);
-		intent.putExtra("id", pic_id);
+		intent.putExtra("fb_id", ids[(position + 1) % ids.length]);
 		startActivity(intent);
 	}
 

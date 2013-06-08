@@ -27,8 +27,10 @@ import com.facebook.android.FacebookError;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -53,7 +55,10 @@ public class SlideshowActivity extends Activity {
 	String TAG = "Slideshow";
 	private String defaultValue = "1";
 	private static final List<String> PERMISSIONS = Arrays.asList("friends_birthday", "user_photos", "friends_photos");
-	private UiLifecycleHelper uiHelper;
+	private String[] ids = {"746975053", "1767412253", "1384204844", "672863965"};
+//"100002592216325"
+	private Handler handler;
+	
 
 	@SuppressLint("NewApi")
 	@Override
@@ -76,13 +81,47 @@ public class SlideshowActivity extends Activity {
 		
 		Log.i(TAG, session.getPermissions().toString());
 		
-		getUserData("746975053");
+		this.handler = new Handler();
 		
-		getPhoto("746975053");
+		try {
+			slideshow();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
 		
 	}
 	
+	@Override
+	protected void onDestroy() {
+	      super.onDestroy();
+	      handler.removeCallbacks(sendData);
+	}
+
 	
+	
+
+
+	private void slideshow() throws InterruptedException {
+		
+	      handler.post(sendData);
+	}
+	
+	
+	private final Runnable sendData = new Runnable(){
+	    public void run(){
+	        try {
+
+				getPhoto();
+	            handler.postDelayed(this, 5000);    
+	        }
+	        catch (Exception e) {
+	            e.printStackTrace();
+	        }   
+	    }
+	};
+
 
 
 	@Override
@@ -91,6 +130,7 @@ public class SlideshowActivity extends Activity {
         switch(keyCode)
         {
         case KeyEvent.KEYCODE_BACK:
+  	      	handler.removeCallbacks(sendData);
         	Intent intent = new Intent(this, HomeScreenActivity.class);
         	startActivity(intent);
          
@@ -121,9 +161,13 @@ public class SlideshowActivity extends Activity {
 	}
 	
 	@SuppressLint("NewApi")
-	private void getPhoto(String id) {
+	private void getPhoto() {
 		
-		String fqlQuery = "select src from photo where owner = " + id;
+		int idSelection = (int) (Math.random() * ids.length);
+		Log.i(TAG, idSelection + "");
+		String id = ids[idSelection];
+		
+		String fqlQuery = "select src_big from photo where owner = " + id;
 
 
 		Bundle params = new Bundle();
@@ -139,10 +183,10 @@ public class SlideshowActivity extends Activity {
 		        Log.i(TAG, "Got results: " + response.toString());
 		        try {
 		        	JSONArray photos = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
-					int i = (int) Math.random() * photos.length();
-					
-						Log.i(TAG, photos.getJSONObject(i).getString("src"));
-						String url = photos.getJSONObject(i).getString("src");
+		        	int i = (int) (Math.random() * photos.length());
+
+						Log.i(TAG, photos.get(i).toString());
+						String url = photos.getJSONObject(i).getString("src_big");
 						Drawable d = drawable_from_url(url, "img");
 						
 						if (d == null) {
@@ -150,7 +194,8 @@ public class SlideshowActivity extends Activity {
 						}
 						
 						ImageView imageView = (ImageView) findViewById(R.id.slideshow_image);
-						imageView.setBackground(d);	
+
+						imageView.setImageDrawable(d);
 					
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
