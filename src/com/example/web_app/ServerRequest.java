@@ -7,19 +7,55 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 
 public class ServerRequest extends AsyncTask<Request, Void, String>{
 	
-	//private String uri = "http://146.169.53.105:55555/s";
+	//private String uri = "http://146.169.53.99:55555/s";
 	private String uri = "http://shell1.doc.ic.ac.uk:55555/s";
-	public contextSwitcher c;
+	public RequestHandler c;
 	
-	public ServerRequest(contextSwitcher c) {
+	public ServerRequest(RequestHandler c) {
 		this.c = c;
+	}
+	
+	public void login(String username, String password) {
+		Request request = new Request(Command.LOGIN, new String[] {username,password});
+		execute(request);
+	}
+	
+	public void register(String username, String password, String acc_type) {
+		Request request = new Request(Command.REGISTER, new String[] {username, password, acc_type});
+		execute(request);
+
+	}
+	
+	public void fetchIDs(String username) {
+		Request request = new Request(Command.FETCHIDS, new String[] {username});
+		execute(request);
+	}
+	
+	public void insertIDs(String username, String[] ids) {
+		String[] result = new String[ids.length + 1];
+		result[0] = username;
+		int i = 1;
+		for(String s : ids) {
+			result[i] = s;
+			i++;
+		}
+		Request request = new Request(Command.INSERTIDS, result);
+		execute(request);
+	}
+	
+	public void addFBID(String username, String fbID) {
+		Request request = new Request(Command.ADDFBID, new String[] {username, fbID});
+		execute(request);
+	}
+	
+	public void sendMessage(String sender, String recipientFBID, String message) {
+		Request request = new Request(Command.SENDMESSAGETO, new String[] {sender, recipientFBID, message});
+		execute(request);
 	}
 
 	@Override
@@ -69,7 +105,7 @@ public class ServerRequest extends AsyncTask<Request, Void, String>{
 	
 	@Override
 	protected void onPostExecute(String result) {
-		c.cSwitch(result); 
+		c.doOnRequestComplete(result); 
 	}
 	
 }
