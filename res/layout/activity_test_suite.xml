@@ -10,11 +10,18 @@
     <Button android:id="@+id/testbutton"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:text="insertfbid"
+        android:text="clearIDS"
         android:onClick="testAction"/>
     
-    <Button android:id="@+id/testbutton2"
+    <EditText
+        android:id="@+id/editTextTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/testbutton"
+        android:hint="Enter message to send" />
+    
+    <Button android:id="@+id/testbutton2"
+        android:layout_below="@id/editTextTest"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:text="sendmsg"

@@ -1,5 +1,7 @@
 package com.example.web_app;
 
+import java.util.Arrays;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -9,6 +11,7 @@ import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -21,6 +24,7 @@ public class TestSuiteActivity extends Activity implements RequestHandler{
 	SharedPreferences pref;
 	String currUser;
 	ImageView imageView;
+	EditText msgBox;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +33,7 @@ public class TestSuiteActivity extends Activity implements RequestHandler{
 		currUser = pref.getString(PREFF_CURR_USER, null);
 		setContentView(R.layout.activity_test_suite);
 		
+		msgBox = (EditText)findViewById(R.id.editTextTest);
 		imageView = (ImageView)findViewById(R.id.imageView1);
 		imageView.setOnTouchListener(new OnTouchListener() {
 			
@@ -66,12 +71,13 @@ public class TestSuiteActivity extends Activity implements RequestHandler{
 	
 	public void testAction(View view) {
     	ServerRequest servReq = new ServerRequest(this);
-    	servReq.addFBID(currUser, "88888888");
+    	servReq.clearIDs(currUser);
 	}
 	
 	public void testAction2(View view) {
     	ServerRequest servReq = new ServerRequest(this);
-    	servReq.sendMessage(currUser, "88888888", "Hellonospace");
+    	String msg = msgBox.getText().toString();
+    	servReq.sendMessage(currUser, "88888888", msg);
 	}
 	
 	@Override
@@ -79,15 +85,23 @@ public class TestSuiteActivity extends Activity implements RequestHandler{
 		Log.v("server reply", s);
 		TextView textView = new TextView(this);
 		
-		String[] reply = s.split(":");
+		String[] reply = s.split("~");
+		
 		String result = "";
 		
+		/*if(reply.length != 1) {
 		for(String x  : reply) {
-			result += x;
-			result += " ";
+			String z = new String(Arrays.copyOfRange(x.toCharArray(), 1, x.length()-1));
+			String[] y = z.split(",", 2);
+			result += y[0] + ": " + y[1] + "\n";
 		}
-		
+		} else {
+			result = reply[0];
+		}*/
+
+		result = s;
 		textView.setText(result);
+		textView.setTextSize(30);
 		setContentView(textView);
 		
 	}
