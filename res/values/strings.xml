@@ -28,6 +28,7 @@
     <string name="google_Login">Google+ Login</string>
     <string name="title_activity_google_login">GoogleLoginActivity</string>
     <string name="title_activity_slideshow">SlideshowActivity</string>
+    <string name="title_activity_testsuite">Test Suite</string>
 
     <color name="light_blue">#46D8F2</color>
 

@@ -37,9 +37,11 @@ public class HomeScreenActivity extends ListActivity {
 		HOME_SCREEN_MAP.put("My Family", MyFamilyActivity.class.getName());
 		HOME_SCREEN_MAP.put("Settings", SettingsActivity.class.getName());
 		HOME_SCREEN_MAP.put("Logout", MainActivity.class.getName());
+		HOME_SCREEN_MAP.put("Testing Button!", TestSuiteActivity.class.getName());
+
 	}
 	
-	private UiLifecycleHelper uiHelper;
+	//private UiLifecycleHelper uiHelper;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +78,7 @@ public class HomeScreenActivity extends ListActivity {
     protected void onListItemClick(ListView listView, View view, int position, long id) {
     	
         Map<String, Object> map = (Map<String, Object>) listView.getItemAtPosition(position);
-        if (map.get(TITLE_KEY).equals("Logout") || map.get(TITLE_KEY).equals("Settings")) {
+        if (map.get(TITLE_KEY).equals("Logout") || map.get(TITLE_KEY).equals("Settings") || map.get(TITLE_KEY).equals("Testing Button!")) {
         	
 			Intent intent = (Intent) map.get(INTENT_KEY);
 			startActivity(intent);

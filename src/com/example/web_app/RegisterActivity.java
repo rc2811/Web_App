@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-public class RegisterActivity extends Activity implements OnItemSelectedListener, contextSwitcher{
+public class RegisterActivity extends Activity implements OnItemSelectedListener, RequestHandler{
 
 	public Spinner spinner;
 	public Context context;
@@ -30,8 +30,6 @@ public class RegisterActivity extends Activity implements OnItemSelectedListener
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.account_types, android.R.layout.simple_spinner_item);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(adapter);
-		
-		
 		
 	}
 
@@ -56,9 +54,8 @@ public class RegisterActivity extends Activity implements OnItemSelectedListener
 		String passwordString = password.getText().toString(); 
 		String acc_type = "" + spinner.getSelectedItemPosition();
 		
-		Request request = new Request(Command.REGISTER, new String[] {usernameString, passwordString, acc_type});
 		ServerRequest servReq = new ServerRequest(this);
-		servReq.execute(request);
+		servReq.register(usernameString, passwordString, acc_type);
 		
 		finish();
 		
@@ -66,7 +63,7 @@ public class RegisterActivity extends Activity implements OnItemSelectedListener
 	}
 
 	@Override
-	public void cSwitch(String result) {
+	public void doOnRequestComplete(String result) {
 		Log.v("Message from server. Register", result);
 		if(result.equals("OK")) {
 			Log.v("registration", "Registration Good");
