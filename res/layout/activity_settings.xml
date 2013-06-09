@@ -12,7 +12,7 @@
    
     <fragment android:name="com.example.web_app.SelectionFragment"
           android:id="@+id/selectionFragment"
-          android:layout_width="match_parent"
+          android:layout_width="wrap_content"
           android:layout_height="match_parent" />
     <fragment android:name="com.example.web_app.SplashFragment"
           android:id="@+id/splashFragment"
@@ -22,6 +22,7 @@
           android:id="@+id/userSettingsFragment"
           android:layout_width="match_parent"
           android:layout_height="match_parent" />
+
     
 
 </TableLayout>

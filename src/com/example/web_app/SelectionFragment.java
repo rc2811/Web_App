@@ -56,7 +56,7 @@ public class SelectionFragment extends Fragment {
 	 profilePictureView.setCropped(true);
 	 
 	// Find the list view
-	 listView = (ListView) view.findViewById(R.id.selection_list);
+//	 listView = (ListView) view.findViewById(R.id.selection_list);
 
 	 // Set up the list view items, based on a list of
 	 // BaseListElement items
@@ -64,8 +64,8 @@ public class SelectionFragment extends Fragment {
 	 // Add an item for the friend picker
 	 listElements.add(new PeopleListElement(0));
 	 // Set the list view adapter
-	 listView.setAdapter(new ActionListAdapter(getActivity(), 
-	                     R.id.selection_list, listElements));
+//	 listView.setAdapter(new ActionListAdapter(getActivity(), 
+//	                     R.id.selection_list, listElements));
 	 
 	 listElements.add(new PeopleListElement(0));
 
@@ -80,15 +80,13 @@ public class SelectionFragment extends Fragment {
 	 Session session = Session.getActiveSession();
 
 	 // Find the user's name view
-	 userNameView = (TextView) view.findViewById(R.id.selection_user_name);
+//	 userNameView = (TextView) view.findViewById(R.id.selection_user_name);
 	 
 	    if (session != null && session.isOpened()) {
 	        // Get the user's data
 	        makeMeRequest(session);
 	    }
-	    
-	    
-	    
+
 	    return view;
 	}
 	
@@ -107,7 +105,7 @@ public class SelectionFragment extends Fragment {
 	                    // view that in turn displays the profile picture.
 	                    profilePictureView.setProfileId(user.getId());
 	                    // Set the Textview's text to the user's name.
-	                    userNameView.setText(user.getName());
+	                  //  userNameView.setText(user.getName());
 	                }
 	            }
 	            if (response.getError() != null) {
@@ -142,13 +140,6 @@ public class SelectionFragment extends Fragment {
 	    uiHelper.onCreate(savedInstanceState);
 	}
 	
-/*	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    super.onActivityResult(requestCode, resultCode, data);
-	    if (requestCode == REAUTH_ACTIVITY_CODE) {
-	        uiHelper.onActivityResult(requestCode, resultCode, data);
-	    }
-	} */
 	
 	@Override
 	public void onResume() {
@@ -204,8 +195,8 @@ public class SelectionFragment extends Fragment {
 	        BaseListElement listElement = listElements.get(position);
 	        if (listElement != null) {
 	            view.setOnClickListener(listElement.getOnClickListener());
-	            ImageView icon = (ImageView) view.findViewById(R.id.icon);
-	            TextView text1 = (TextView) view.findViewById(R.id.text1);
+	      //      ImageView icon = (ImageView) view.findViewById(R.id.icon);
+	        /*    TextView text1 = (TextView) view.findViewById(R.id.text1);
 	            TextView text2 = (TextView) view.findViewById(R.id.text2);
 	            if (icon != null) {
 	                icon.setImageDrawable(listElement.getIcon());
@@ -215,12 +206,22 @@ public class SelectionFragment extends Fragment {
 	            }
 	            if (text2 != null) {
 	                text2.setText(listElement.getText2());
-	            }
+	            } */
 	        }
 	        return view;
 	    }
+	    
+	    public void family_auto(View view) {
+	    	
+	    	
+	    	
+	    }
+	    
+
+	    
 
 	}
+	
 	
 	private class PeopleListElement extends BaseListElement {
 		

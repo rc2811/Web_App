@@ -1,4 +1,7 @@
 package com.example.web_app;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +14,7 @@ import android.util.Log;
 
 import com.example.web_app.R;
 import com.facebook.FacebookException;
+import com.facebook.model.GraphUser;
 import com.facebook.widget.FriendPickerFragment;
 import com.facebook.widget.PickerFragment;
 
@@ -97,7 +101,11 @@ public class PickerActivity extends FragmentActivity {
 	    
 	    if (FRIEND_PICKER.equals(getIntent().getData())) {
 	        if (friendPickerFragment != null) {
-	        	Intent intent = new Intent(this, HomeScreenActivity.class);
+	        	Intent intent = new Intent(this, SettingsActivity.class);
+	        	
+	        	List<String> family_ids = getFamilyIds(friendPickerFragment.getSelection());
+	        	
+	        	intent.putExtra("num_selections", family_ids.size());
 
 	    	    startActivity(intent);
 
@@ -106,6 +114,20 @@ public class PickerActivity extends FragmentActivity {
 	    setResult(RESULT_OK, null);
 
 	    finish();
+	}
+	
+	
+	private List<String> getFamilyIds(List<GraphUser> selection) {
+		
+		List<String> ids = new ArrayList<String>();
+		
+		for (GraphUser g : selection) {
+			ids.add(g.getId());
+			
+		}
+		
+		return ids;
+		
 	}
 	
 	@Override

@@ -1,22 +1,43 @@
 package com.example.web_app;
 
+import java.util.Arrays;
+import java.util.List;
+
+import com.facebook.Session;
+
 import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.text.Editable;
 import android.view.Menu;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 public class QuizStartActivity extends Activity {
 	
 
+	private static final List<String> PERMISSIONS = Arrays.asList("friends_birthday", "user_photos", "friends_photos", "read_friendlists", "user_relationships");
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_quiz_start);
 		setTitle("Start Quiz");
+		
+		Session session1 = new Session(this);
+		session1.openForRead(new Session.OpenRequest(this));
+
+		session1.requestNewReadPermissions(new Session.NewPermissionsRequest(this, PERMISSIONS));
+		
+		Session.setActiveSession(session1);
+		
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+		StrictMode.setThreadPolicy(policy);
 		
 	}
 
@@ -29,20 +50,37 @@ public class QuizStartActivity extends Activity {
 	
 	
 	public void quiz(View view) {
-		//RadioButton one_radio = (RadioButton) view.findViewById(R.id.one_question_radio);
-		//RadioButton five_radio = (RadioButton) view.findViewById(R.id.five_questions_radio);
+		
+		EditText editText = (EditText) findViewById(R.id.num_questions);
 		
 		Intent intent = new Intent(this, QuizActivity.class);
 		
-		//if (five_radio.isActivated()) {
-	//	} else {
-		//	intent.putExtra("num_questions", 1);
-	//	}
+		String num_questions_string = null;
 		
-		startActivity(intent);
+		int num_questions = 0;
+		
+		Editable t = editText.getText();
+		if (t != null) {
+			num_questions_string = t.toString();
+		}
+		
+		if (num_questions_string != "")
+			num_questions = Integer.parseInt(num_questions_string);
+		
+			if (num_questions < 0 || num_questions > 10) {
+				Toast.makeText(this, "Please enter a number between 1 and 10 inclusive", Toast.LENGTH_SHORT).show();
+
+			} else {
+			
+				intent.putExtra("num_questions", num_questions);
+				startActivity(intent);
+				
+			}
+		}
+
 		
 	}
 	
 	
 
-}
+

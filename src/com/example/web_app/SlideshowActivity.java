@@ -42,6 +42,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -64,6 +66,11 @@ public class SlideshowActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
 		setContentView(R.layout.activity_slideshow);
 		session = Session.getActiveSession();
 		
@@ -88,9 +95,7 @@ public class SlideshowActivity extends Activity {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-	
-		
+		}		
 	}
 	
 	@Override
@@ -99,15 +104,10 @@ public class SlideshowActivity extends Activity {
 	      handler.removeCallbacks(sendData);
 	}
 
-	
-	
-
-
 	private void slideshow() throws InterruptedException {
 		
 	      handler.post(sendData);
 	}
-	
 	
 	private final Runnable sendData = new Runnable(){
 	    public void run(){
@@ -121,8 +121,6 @@ public class SlideshowActivity extends Activity {
 	        }   
 	    }
 	};
-
-
 
 	@Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -194,7 +192,6 @@ public class SlideshowActivity extends Activity {
 						}
 						
 						ImageView imageView = (ImageView) findViewById(R.id.slideshow_image);
-
 						imageView.setImageDrawable(d);
 					
 				} catch (JSONException e) {
@@ -213,10 +210,6 @@ public class SlideshowActivity extends Activity {
 		
 	}
 
-
-	
-	
-	
 	private Drawable drawable_from_url(String url, String src_name) throws 
 	   java.net.MalformedURLException, java.io.IOException {
 		
@@ -224,11 +217,6 @@ public class SlideshowActivity extends Activity {
 	      new java.net.URL(url).getContent()), src_name);
 	}
 	
-//	private String removeExtras(S)
-	
-	
-	
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

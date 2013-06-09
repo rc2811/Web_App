@@ -40,7 +40,7 @@ import android.widget.AdapterView.OnItemClickListener;
 @SuppressLint("NewApi")
 public class MyFamilyActivity extends Activity {
 	
-	private static final List<String> PERMISSIONS = Arrays.asList("friends_birthday", "user_photos", "friends_photos");
+	private static final List<String> PERMISSIONS = Arrays.asList("friends_birthday", "user_photos", "friends_photos", "read_friendlists", "user_relationships");
 	private String[] ids = {"746975053", "1767412253", "1384204844", "672863965", "100002592216325"};
 	
 	private String TAG = "MyFamilyActivity";
@@ -68,6 +68,7 @@ public class MyFamilyActivity extends Activity {
 		if (session1 != null && session1.isOpened()) {
 			Log.i(TAG, "session ok");
 			getPhotos();
+
 		} else {
 			Log.d(TAG, "no session");
 		}
@@ -173,9 +174,9 @@ public class MyFamilyActivity extends Activity {
 		startActivity(intent);
 	}
 
-
-	
-
-	
-
 }
+	
+
+
+	
+
