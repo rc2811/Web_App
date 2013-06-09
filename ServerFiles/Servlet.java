@@ -25,12 +25,6 @@ public class Servlet extends HttpServlet {
 			 conn = DriverManager.getConnection (
 	    	"jdbc:postgresql://db.doc.ic.ac.uk/g1227128_u",
 			"g1227128_u", "lmX5xgXehM" );
-			 
-	//		 Statement stmt = conn.createStatement();
-//			 ResultSet rs = stmt.executeQuery("SELECT " + dbMessageKey + " FROM userdata WHERE " + dbUserKey + " = 'matt';");
-//			 rs.next();
-//				String[] a = (String[]) rs.getArray(dbMessageKey).getArray();
-//				System.out.println(a[0]);
 
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -94,21 +88,23 @@ checkInput: 	{
 					}
 					
 				pstmt = conn.prepareStatement("INSERT into logins VALUES('"+ arguments[0] + "', '" + BCrypt.hashpw(arguments[1], BCrypt.gensalt()) + "', " + Integer.parseInt(arguments[2]) + ");");
-
 				pstmt.executeUpdate();
-				reply = "OK";
-					
+				
+				pstmt = conn.prepareStatement("INSERT into userdata VALUES('" + arguments[0] + "');");
+				pstmt.executeUpdate();
+				
+				reply = "OK";			
 				}
 			}
 			else if(command.equals(Command.FETCHIDS.toString()))
 			{
 				rs = stmt.executeQuery("SELECT * FROM userdata WHERE " + dbUserKey + " = '" + arguments[0] + "';");
 				rs.next();
-				Integer[] array = (Integer[])rs.getArray(dbFIDKey).getArray();
+				Long[] array = (Long[])rs.getArray(dbFIDKey).getArray();
 				
 				reply = "";
 
-				for(int i : array)
+				for(long i : array)
 				{
 					reply += i + ":";
 				}
@@ -128,6 +124,12 @@ checkInput: 	{
 												" WHERE " + dbUserKey + " = '" + arguments[0] + "';");
 					pstmt.executeUpdate();
 				}
+				reply = "OK";
+			}
+			else if(command.equals(Command.CLEARIDS.toString()))
+			{
+				pstmt = conn.prepareStatement("UPDATE userdata SET " + dbFIDKey + " = NULL WHERE " + dbUserKey + " = '" + arguments[0] + "';");
+				pstmt.executeUpdate();
 				reply = "OK";
 			}
 			else if(command.equals(Command.ADDFBID.toString()))
@@ -167,17 +169,16 @@ checkInput: 	{
 			}
 			else if(command.equals(Command.GETMESSAGES.toString()))
 			{
-				rs = stmt.executeQuery("SELECT " + dbMessageKey + " FROM userdata WHERE " + dbUserKey + " = '" + arguments[0] + "';");
-				if(rs.next())
+				rs = stmt.executeQuery("SELECT array_to_string(" + dbMessageKey + ", '~') FROM userdata WHERE " + dbUserKey + " = '" + arguments[0] + "';");
+				if(!rs.next())
 				{
 					reply = "YOU HAVE NO NOTES";
 				}
 				else
 				{
-					String[] a = (String[]) rs.getArray(dbMessageKey).getArray();
-					System.out.println(a[0]);
-					//rs.getArray(dbMessageKey).getArray();
+					reply = rs.getString("array_to_string");
 				}
+				System.out.println(reply);
 			}
 			else
 			{
@@ -209,6 +210,6 @@ checkInput: 	{
     }
 
     public enum Command {
-    	LOGIN, REGISTER, FETCHIDS, INSERTIDS, ADDFBID, SENDMESSAGETO, GETMESSAGES
+    	LOGIN, REGISTER, FETCHIDS, INSERTIDS, ADDFBID, SENDMESSAGETO, GETMESSAGES, CLEARIDS
     }
 }
