@@ -12,6 +12,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.text.Editable;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
@@ -28,6 +29,9 @@ public class QuizStartActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_quiz_start);
 		setTitle("Start Quiz");
+		
+		EditText textEdit = (EditText) findViewById(R.id.num_questions);
+		textEdit.setInputType(InputType.TYPE_CLASS_NUMBER);
 		
 		Session session1 = new Session(this);
 		session1.openForRead(new Session.OpenRequest(this));

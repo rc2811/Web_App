@@ -49,15 +49,13 @@ import com.facebook.model.GraphObject;
 public class FamilyMemberActivity extends Activity {
 	
 	private static final List<String> PERMISSIONS = Arrays.asList("friends_birthday", "user_photos",
-																 "friends_education_history", "friends_photos");
+																 "friends_education_history", "friends_photos", "friends_hometown");
 	
 	private String TAG = "FamilyMemberActivity";
 	private List<String> photoURLS;
 	private String currentProfilePicURL;
 	
 	
-	
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -154,8 +152,9 @@ public class FamilyMemberActivity extends Activity {
 						String pic_url = j.getString("pic_big");
 						String birthday = j.getString("birthday");
 						JSONArray education = j.getJSONArray("education");
+						Log.i(TAG, education.toString());
+						
 						String name = j.getString("name");
-						String hometown = j.getString("hometown_location");
 						JSONArray work = j.getJSONArray("work");
 						
 						Log.i(TAG, "Name: " + name);
@@ -167,34 +166,8 @@ public class FamilyMemberActivity extends Activity {
 							if (d != null) {
 								ImageView iv = (ImageView) findViewById(R.id.profile_img);
 								iv.setImageDrawable(d);
-
-								
 							}
 						} 
-						
-						if (!name.equals("null")) {
-							TextView textView = new TextView(this);
-							textView.setText("Name: " + name);
-							Log.i(TAG, "Got name " + name);
-							
-							TableLayout layout = (TableLayout) findViewById(R.id.family_member_layout);
-							layout.addView(textView);
-							
-							setTitle(name);
-							
-						}
-						
-						if ( !hometown.equals("null")) {
-							
-							Log.i(TAG, hometown.length() + "");
-							TextView textView = new TextView(this);
-
-							textView.setText("Hometown: " + hometown);	
-							Log.i(TAG, "Got hometown " + name);
-							
-							TableLayout layout = (TableLayout) findViewById(R.id.family_member_layout);
-							layout.addView(textView);
-						}
 						
 						if (!birthday.equals("null")) {
 
@@ -202,8 +175,60 @@ public class FamilyMemberActivity extends Activity {
 							textView.setText("Birthday: " + birthday);
 							Log.i(TAG, "Got birthday " + name);
 							
-							TableLayout layout = (TableLayout) findViewById(R.id.family_member_layout);
+							TableLayout layout = (TableLayout) findViewById(R.id.family_member_info);
 							layout.addView(textView);
+						}
+						
+						if (!name.equals("null")) {
+							TextView textView = new TextView(this);
+							textView.setText(name);
+							Log.i(TAG, "Got name " + name);
+							
+							setTitle(name);
+							
+						}
+						
+							
+						if (j.get("hometown_location") != null) {
+							JSONObject hometown_object = j.getJSONObject("hometown_location");
+							String hometown = hometown_object.getString("name");
+
+
+							TextView textView = new TextView(this);
+							textView.setText("Hometown: " + hometown);	
+							Log.i(TAG, "Got hometown " + name);
+							
+							TableLayout layout = (TableLayout) findViewById(R.id.family_member_info);
+							layout.addView(textView);
+						}
+						
+						
+						if (!education.equals("null")) {
+							for (int i = 0; i < education.length(); i++) {
+								
+								JSONObject result = education.getJSONObject(i);
+								if (result.getString("type").equals("High School")) {
+									JSONObject school = result.getJSONObject("school");
+									String school_name = school.getString("name");
+									TextView textView = new TextView(this);
+									textView.setText("High School: " + school_name);
+									
+									TableLayout layout = (TableLayout) findViewById(R.id.family_member_info);
+									layout.addView(textView);
+									
+								} else if (result.getString("type").equals("College")) {
+									JSONObject school = result.getJSONObject("school");
+									String school_name = school.getString("name");
+									TextView textView = new TextView(this);
+									textView.setText("University: " + school_name);
+									
+									TableLayout layout = (TableLayout) findViewById(R.id.family_member_info);
+									layout.addView(textView);
+									
+									
+								}
+								
+							}
 						}
 					
 					}
@@ -260,7 +285,12 @@ public class FamilyMemberActivity extends Activity {
 		
 		photoURLS = new ArrayList<String>();
 		
-		for (int i = 0; i < 20; i++) {
+		int num_photos = 20;
+		if (data.length() < 20) {
+			num_photos = data.length();
+		}
+		
+		for (int i = 0; i < num_photos; i++) {
 			
 			String url = data.getJSONObject(i).getString("src");
 			

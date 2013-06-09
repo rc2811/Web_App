@@ -13,33 +13,6 @@
     android:stretchColumns="*"
     tools:context=".HomeScreenActivity" >
           
-	<Button
-		android:layout_width="match_parent"
-		android:layout_height="48dp"
-		android:text="@string/slideshow" />
-          
-	<Button
-		android:layout_width="match_parent"
-		android:layout_height="48dp"
-		android:text="@string/quiz"
-		android:onClick="quiz" />
-                    
-	<Button
-		android:layout_width="match_parent"
-		android:layout_height="48dp"
-		android:text="@string/my_family"
-		android:onClick="myFamily" /> 
-		
-	<Button
-		android:layout_width="match_parent"
-		android:layout_height="48dp"
-		android:text="@string/settings"
-		android:onClick="settings" />
-			          
-	<Button
-		android:layout_width="match_parent"
-		android:layout_height="48dp"
-		android:text="@string/logout"
-		android:onClick="logout" />
+
 		      
 </TableLayout>

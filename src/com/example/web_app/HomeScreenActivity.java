@@ -16,6 +16,8 @@ import android.os.StrictMode;
 import android.annotation.TargetApi;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ListView;
@@ -23,11 +25,14 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-public class HomeScreenActivity extends ListActivity {
+public class HomeScreenActivity extends ListActivity implements RequestHandler {
 	
     private static final String FROM_TITLE = "title";
     private static final String TITLE_KEY = "title";
     private static final String INTENT_KEY = "intent";
+	SharedPreferences pref;
+	String currUser;
+	 Map<String, Object> map;
 	
 	private static final Map<String, String> HOME_SCREEN_MAP;
 	static {
@@ -39,7 +44,6 @@ public class HomeScreenActivity extends ListActivity {
 		HOME_SCREEN_MAP.put("Logout", MainActivity.class.getName());
 	}
 	
-	private UiLifecycleHelper uiHelper;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +51,10 @@ public class HomeScreenActivity extends ListActivity {
 		setListAdapter(new SimpleAdapter(this, getOptions(),
 				R.layout.main_list_item, new String[] { FROM_TITLE },
 				new int[] { android.R.id.text1 }));
+		
+		
+		pref = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+		currUser = pref.getString("currUser", null);
 			
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 		StrictMode.setThreadPolicy(policy);
@@ -76,25 +84,18 @@ public class HomeScreenActivity extends ListActivity {
     protected void onListItemClick(ListView listView, View view, int position, long id) {
     	
         Map<String, Object> map = (Map<String, Object>) listView.getItemAtPosition(position);
+        this.map = map;
         if (map.get(TITLE_KEY).equals("Logout") || map.get(TITLE_KEY).equals("Settings")) {
         	
 			Intent intent = (Intent) map.get(INTENT_KEY);
 			startActivity(intent);
         	
         } else {
-    	
-        	Session session = Session.getActiveSession();
-    	
-        	if (session != null) {
-    		
-        		List<String> permissions = session.getPermissions();
+        	
+        	ServerRequest s = new ServerRequest(this);
+        	s.fetchIDs(currUser);
+        
 
-        		Intent intent = (Intent) map.get(INTENT_KEY);
-        		startActivity(intent);
-
-        	} else {
-				Toast.makeText(this, "Select the 'Settings' option to log in with Facebook first.", Toast.LENGTH_SHORT).show();
-        	}
 
         }
     }
@@ -111,6 +112,33 @@ public class HomeScreenActivity extends ListActivity {
             return false;
         }
         return false;
+	}
+
+	@Override
+	public void doOnRequestComplete(String s) {
+    	
+		Log.i("HomeScreenActivity", s);
+		
+		if (!s.equals("YOU HAVE NO FRIENDS")) {
+			
+    		Intent intent = (Intent) map.get(INTENT_KEY);
+    		startActivity(intent);
+		} else {
+			Toast.makeText(this, "Select the 'Settings' option to log in with Facebook first.", Toast.LENGTH_SHORT).show();
+		}
+	
+    	/*
+    	
+    	if (session != null) {
+		
+    		List<String> permissions = session.getPermissions();
+
+
+
+    	} else {
+			Toast.makeText(this, "Select the 'Settings' option to log in with Facebook first.", Toast.LENGTH_SHORT).show();
+    	} */
+		
 	}
 
 	

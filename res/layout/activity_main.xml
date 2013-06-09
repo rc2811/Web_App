@@ -24,46 +24,38 @@
 	<EditText
 
 		android:id="@+id/editUsername"
-		android:textSize="30sp"
 		android:layout_width="0dp"
-		android:layout_height="70dp"
+		android:layout_height="wrap_content"
 		android:hint="@string/username" />
 
 	<EditText
 		android:id="@+id/editPassword"
-		android:textSize="30sp"
 		android:inputType="textPassword"
 		android:layout_width="0dp"
-		android:layout_height="70dp"
+		android:layout_height="wrap_content"
 		android:hint="@string/password" />
 	
 	<CheckBox
          android:id="@+id/rememberUser"
          android:layout_width="wrap_content"
-		 android:layout_height="70dp"
+		android:layout_height="wrap_content"
          android:text="Remember me" 
-		 android:textSize="30sp"
          android:onClick="rememberUser"/>
 	
     <Button
         android:id="@+id/loginButton"
-        android:textSize="30sp"
-        android:layout_width="wrap_content"
-		android:layout_height="70dp"
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
         android:onClick="getAccountInfo"
         android:text="@string/login" />
     
     <Button 
         android:id="@+id/registerButton"
-        android:layout_width="wrap_content"
-                android:textSize="30sp"
-		android:layout_height="70dp"
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
         android:onClick="register"
         android:text="@string/register" />
     
-    <TextView 
-        android:id="@+id/welcome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+ 
 
 </TableLayout>

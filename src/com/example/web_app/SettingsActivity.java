@@ -74,7 +74,7 @@ public class SettingsActivity extends FragmentActivity implements RequestHandler
 	    int n = intent.getIntExtra("num_selections", 0);
 	    
 	    if (n != 0) {
-	    	Toast.makeText(getApplicationContext(), "Selected " + n + " family members", Toast.LENGTH_SHORT).show();
+	    	Toast.makeText(getApplicationContext(), "Added " + n + " family members", Toast.LENGTH_SHORT).show();
 	    }
 
 	    FragmentTransaction transaction = fm.beginTransaction();
@@ -357,6 +357,12 @@ public class SettingsActivity extends FragmentActivity implements RequestHandler
 		s.insertIDs(currUser, ids);
 	
 		
+	}
+	
+	public void delete_family_info(View view) {
+		ServerRequest s = new ServerRequest(this);
+		s.clearIDs(currUser);
+		Toast.makeText(getApplicationContext(), "Deleted family information", Toast.LENGTH_SHORT).show();
 	}
 
     	

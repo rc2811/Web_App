@@ -27,6 +27,14 @@
         	android:layout_height="wrap_content"
         	android:text="Find family manually"
         	android:onClick="family_manual" />
+    
+    <Button
+        	android:id="@+id/delete_family_info"
+        	android:layout_width="match_parent"
+        	android:layout_height="wrap_content"
+        	android:text="Delete current family information"
+        	android:onClick="delete_family_info" />
+    
         	
 
 

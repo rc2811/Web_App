@@ -60,6 +60,7 @@ public class MainActivity extends Activity implements RequestHandler {
 		
 		editUsername = (EditText) findViewById(R.id.editUsername);
 		editPassword = (EditText) findViewById(R.id.editPassword);
+		
 		cBox = (CheckBox) findViewById(R.id.rememberUser);
 
 		if (username != null && password != null) {
@@ -104,7 +105,7 @@ public class MainActivity extends Activity implements RequestHandler {
 		if(result.equals("OK")) {
 			Log.v("message comparison", "Login Good");
 			getSharedPreferences(PREFS_NAME,MODE_PRIVATE).edit().putString(PREFF_CURR_USER, editUsername.getText().toString()).commit();
-			rememberUser();
+			//rememberUser();
 			Intent intent = new Intent(context, HomeScreenActivity.class);
 			startActivity(intent);
 		} else {
@@ -116,7 +117,7 @@ public class MainActivity extends Activity implements RequestHandler {
 		}
 	}
 	
-public void rememberUser() {
+	public void rememberUser(View view) {
 		//Store current username and password in shared preferences
 		if(cBox.isChecked()){
 			String usernameString = editUsername.getText().toString();
