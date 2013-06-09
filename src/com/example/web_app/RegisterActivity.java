@@ -31,6 +31,8 @@ public class RegisterActivity extends Activity implements OnItemSelectedListener
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(adapter);
 		
+		
+		
 	}
 
 	@Override
@@ -54,8 +56,9 @@ public class RegisterActivity extends Activity implements OnItemSelectedListener
 		String passwordString = password.getText().toString(); 
 		String acc_type = "" + spinner.getSelectedItemPosition();
 		
+		Request request = new Request(Command.REGISTER, new String[] {usernameString, passwordString, acc_type});
 		ServerRequest servReq = new ServerRequest(this);
-		servReq.register(usernameString, passwordString, acc_type);
+		servReq.execute(request);
 		
 		finish();
 		
@@ -90,5 +93,7 @@ public class RegisterActivity extends Activity implements OnItemSelectedListener
 		// TODO Auto-generated method stub
 		
 	}
+
+
 
 }

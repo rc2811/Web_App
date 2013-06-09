@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.facebook.HttpMethod;
@@ -31,7 +33,7 @@ import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
 
 @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-public class SettingsActivity extends FragmentActivity {
+public class SettingsActivity extends FragmentActivity implements RequestHandler {
 	
 	private static final int SPLASH = 0;
 	private static final int SELECTION = 1;
@@ -40,6 +42,10 @@ public class SettingsActivity extends FragmentActivity {
 	private static final int SETTINGS = 2;
 	private static final int FRAGMENT_COUNT = SETTINGS + 1;
 	private MenuItem settings;
+	SharedPreferences pref;
+	String currUser;
+	
+
 	
 	private static final String TAG = "SettingsFragment";
 	
@@ -55,6 +61,9 @@ public class SettingsActivity extends FragmentActivity {
 		uiHelper.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_settings);
+		
+		pref = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+		currUser = pref.getString("currUser", null);
 		
 	    FragmentManager fm = getSupportFragmentManager();
 	    fragments[SPLASH] = fm.findFragmentById(R.id.splashFragment);
@@ -312,6 +321,20 @@ public class SettingsActivity extends FragmentActivity {
 						
 						
 						Toast.makeText(getApplicationContext(), "Found " + data.length() + " family members", Toast.LENGTH_SHORT).show();
+						String[] ids = new String[data.length()];
+						
+						for (int i = 0; i < data.length(); i++) {
+							Log.i(TAG, data.getJSONObject(i).getString("uid"));
+
+							ids[i] = data.getJSONObject(i).getString("uid");
+
+
+						}
+						
+						addIDsToServer(ids);
+						
+						
+						
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -322,8 +345,19 @@ public class SettingsActivity extends FragmentActivity {
     	Request.executeBatchAsync(request);
     			
     	}
-    
-   
+
+	@Override
+	public void doOnRequestComplete(String s) {
+		Log.i(TAG, "inserted users ok");
+		
+	}
+	
+	private void addIDsToServer(String[] ids) {
+		ServerRequest s = new ServerRequest(this);
+		s.insertIDs(currUser, ids);
+	
+		
+	}
 
     	
     }

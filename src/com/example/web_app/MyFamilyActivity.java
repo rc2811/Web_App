@@ -23,6 +23,7 @@ import com.facebook.UiLifecycleHelper;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -38,13 +39,16 @@ import android.widget.TableLayout;
 import android.widget.AdapterView.OnItemClickListener;
 
 @SuppressLint("NewApi")
-public class MyFamilyActivity extends Activity {
+public class MyFamilyActivity extends Activity implements RequestHandler {
 	
 	private static final List<String> PERMISSIONS = Arrays.asList("friends_birthday", "user_photos", "friends_photos", "read_friendlists", "user_relationships");
-	private String[] ids = {"746975053", "1767412253", "1384204844", "672863965", "100002592216325"};
+	private String[] ids;
 	
 	private String TAG = "MyFamilyActivity";
 	List<Drawable> profile_pics;
+	
+	SharedPreferences pref;
+	String currUser;
 	
 
 	@Override
@@ -53,9 +57,15 @@ public class MyFamilyActivity extends Activity {
 		setContentView(R.layout.grid_layout);
 		setTitle("Your Family");
 		profile_pics = new ArrayList<Drawable>();
+		
+		
+		pref = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+		currUser = pref.getString("currUser", null);
 
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 		StrictMode.setThreadPolicy(policy);
+	
+		
 		
 		Session session1 = new Session(this);
 		session1.openForRead(new Session.OpenRequest(this));
@@ -64,26 +74,10 @@ public class MyFamilyActivity extends Activity {
 			
 			
 		Session.setActiveSession(session1);
-
-		if (session1 != null && session1.isOpened()) {
-			Log.i(TAG, "session ok");
-			getPhotos();
-
-		} else {
-			Log.d(TAG, "no session");
-		}
 		
-		
-		final GridView gridView = (GridView) findViewById(R.id.grid_view);
+		ServerRequest s = new ServerRequest(this);
+		s.fetchIDs(currUser);
 
-		gridView.setAdapter(new ImageAdapter(this, profile_pics));
-
-
-	    gridView.setOnItemClickListener(new OnItemClickListener() {
-	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-	           selectFamilyMember(position, gridView);
-	        }
-	    });
 	    
 	}
 
@@ -93,8 +87,7 @@ public class MyFamilyActivity extends Activity {
 		for (int i = 0; i < 5; i++) {
 		
 		String fqlQuery = "select pic_big from user where uid = " + ids[i];
-		//	String fqlQuery = "select uid, name, about_me from user where uid = " + ids[i];
-		//		"access_token = " + session.getAccessToken();
+
 		Bundle params = new Bundle();
 		params.putString("q", fqlQuery);
 
@@ -172,6 +165,34 @@ public class MyFamilyActivity extends Activity {
 		Intent intent = new Intent(this, FamilyMemberActivity.class);
 		intent.putExtra("fb_id", ids[(position + 1) % ids.length]);
 		startActivity(intent);
+	}
+
+
+	@Override
+	public void doOnRequestComplete(String s) {
+		ids = s.split(":");
+		
+		Session session1 = Session.getActiveSession();
+		if (session1 != null && session1.isOpened()) {
+			Log.i(TAG, "session ok");
+			getPhotos();
+
+		} else {
+			Log.d(TAG, "no session");
+		}
+		
+		
+		final GridView gridView = (GridView) findViewById(R.id.grid_view);
+
+		gridView.setAdapter(new ImageAdapter(this, profile_pics));
+
+
+	    gridView.setOnItemClickListener(new OnItemClickListener() {
+	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+	           selectFamilyMember(position, gridView);
+	        }
+	    });
+		
 	}
 
 }

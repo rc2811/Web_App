@@ -1,5 +1,6 @@
 package com.example.web_app;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.HttpMethod;
@@ -28,24 +30,23 @@ import com.facebook.model.GraphObject;
 
 public class QuizActivity extends Activity implements OnClickListener {
 	
-	private int correctAnswer;
+	private String correctAnswerUID;
 	private int maxQuestions;
 	private int currentQuestion;
 	private int correct;
 	private int questionNumber;
+	private String choice_a;
+	private String choice_b;
+	private String choice_c;
+	private String choice_d;
 	
 	private static final List<String> PERMISSIONS = Arrays.asList("friends_birthday", "user_photos", "friends_photos",
 										"read_friendlists", "user_relationships");
 	
 	private String TAG = "QuizActivity";
 	
-	private List<String> uids = Arrays.asList("746975053", "1767412253", "1384204844", "672863965", "100002592216325");
-	private List<String> names;
-	private List<String> birthdays;
-	private List<String> schools;
-	private List<String> work;
-	private List<String> ages;
-	private List<String> profile_picture_urls;
+	private List<String> uids;
+	private List<FamilyMember> family;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,20 +63,32 @@ public class QuizActivity extends Activity implements OnClickListener {
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 		StrictMode.setThreadPolicy(policy);
 		
+		family = new ArrayList<FamilyMember>();
+		uids = new ArrayList<String>();
+		
+		uids.add("746975053");
+		uids.add("1767412253");
+		uids.add("1384204844");
+		uids.add("672863965");
+		uids.add("100002592216325");
+		
 		getFamilyData();
+		
+		Log.i(TAG, family.toString());
+	
 		
 		maxQuestions = 1;
 		
 		correct = 0;
-		quiz(1);
+		quiz(1); 
 		
 	}
 	
 	private void getFamilyData() {
 
-		for (int i = 0; i < 5; i++) {
+		for (int i = 1; i < 2 ; i++) {
 		
-		String fqlQuery = "select name, birthday, education, work, pic_big from user where uid = " + uids.get(i);
+		String fqlQuery = "select uid, name, birthday, education, work, pic_big from user where uid = " + uids.get(i);
 
 		Bundle params = new Bundle();
 		params.putString("q", fqlQuery);
@@ -95,7 +108,17 @@ public class QuizActivity extends Activity implements OnClickListener {
 			       	JSONObject j = g.getInnerJSONObject();
 			       	try {
 						JSONArray data = j.getJSONArray("data");
+						JSONObject info = data.getJSONObject(0);
 						Log.i(TAG, data.toString());
+						
+						FamilyMember f = new FamilyMember(info.getString("uid"), info.getString("name"), info.getString("birthday"),
+								info.getString("pic_big"));
+						
+						Log.i(TAG, "SUCCESS");
+						
+						Log.i(TAG, f.toString());
+						
+						family.add(f);
 						
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
@@ -110,7 +133,6 @@ public class QuizActivity extends Activity implements OnClickListener {
 		Request.executeBatchAsync(request);
 		        }
 		        
-
 		}
 	
 	
@@ -121,10 +143,41 @@ public class QuizActivity extends Activity implements OnClickListener {
 		return true;
 	}
 	
+	private List<FamilyMember> getChoices() {
+		
+		List<String> uids = new ArrayList<String>();
+		List<FamilyMember> family_choices = new ArrayList<FamilyMember>();
+
+		int family_size = family.size();
+		
+		Log.d(TAG, "size of family "+ family_size);
+		
+		int i = 0;
+		while (i < 4) {
+			int rand = (int) Math.random() * family_size;
+			Log.d(TAG, family.get(rand).toString());
+			if (family.get(rand).getBirthday() != null && !family_choices.contains(family.get(rand))) {
+				family_choices.add(family.get(rand));
+				i++;	
+			}	
+		}
+		
+		return family_choices;
+		
+	}
+	
+
+	
 	public void quiz(int question_num) {
 		
 		if (question_num != maxQuestions +1) {
-		//	setupQuestion(question_num);
+			
+			
+			List<FamilyMember> choices = getChoices();
+			int answer = (int) Math.random() * 4;
+			
+			setupQuestion(choices.get(0), choices.get(1), choices.get(2), choices.get(3), choices.get(answer));
+
 			currentQuestion = question_num;
 		} else {
 			Intent intent  = new Intent(this, QuizResultsActivity.class);
@@ -136,20 +189,31 @@ public class QuizActivity extends Activity implements OnClickListener {
 		
 	}
 	
-	public void setupQuestion(String answer_a, String answer_b, String answer_c, String answer_d, int correct, String person_img_URL) {
+	public void setupQuestion(FamilyMember answer_a, FamilyMember answer_b, FamilyMember answer_c,
+			FamilyMember answer_d, FamilyMember correct) {
 		setTitle("Question " + questionNumber);
+		
+		TextView question = (TextView) findViewById(R.id.question);
+
+		question.setText("When is " + correct.getName() + "'s birthday");
+
+		
 		
 		ImageView quiz_picture = (ImageView) this.findViewById(R.id.quiz_picture);
 		quiz_picture.setBackgroundResource(R.drawable.andrew);
 		
 		Button option_1 = (Button) this.findViewById(R.id.option_1);
-		option_1.setText(answer_a);
+		option_1.setText(answer_a.getBirthday());
+		this.choice_a = answer_a.getUid();
 		Button option_2 = (Button) this.findViewById(R.id.option_2);
-		option_2.setText(answer_b);
+		option_2.setText(answer_b.getBirthday());
+		this.choice_b = answer_b.getUid();
 		Button option_3 = (Button) this.findViewById(R.id.option_3);
-		option_3.setText(answer_b);
+		option_3.setText(answer_c.getBirthday());
+		this.choice_c = answer_c.getUid();
 		Button option_4 = (Button) this.findViewById(R.id.option_4);
-		option_4.setText(answer_c);
+		option_4.setText(answer_d.getBirthday());
+		this.choice_d = answer_d.getUid();
 		
 
 		option_1.setOnClickListener(this);
@@ -158,28 +222,28 @@ public class QuizActivity extends Activity implements OnClickListener {
 
 		option_3.setOnClickListener(this);
 		
-		option_4.setOnClickListener(this);
+		option_4.setOnClickListener(this); 
 		
-		correctAnswer = 2;
+		correctAnswerUID = correct.getUid();
 		
 		
 	}
 	
 	public void onClick(View view) {
 		
-		int response = 1;
+		String response = null;
 		
 		if (view.getId() == R.id.option_1) {
-			response = 1;
+			response = choice_a;
 		} else if (view.getId() == R.id.option_2) {
-			response = 2;
+			response = choice_b;
 		} else if (view.getId() == R.id.option_3) {
-			response = 3;
+			response = choice_c;
 		} else if (view.getId() == R.id.option_4) {
-			response = 4;
+			response = choice_d;
 		}
 		
-		if (response != correctAnswer) {
+		if (response != correctAnswerUID) {
 			Toast.makeText(getApplicationContext(), "Incorrect Answer", Toast.LENGTH_SHORT).show();
 		} else {
 			Toast.makeText(getApplicationContext(), "Correct Answer", Toast.LENGTH_SHORT).show();

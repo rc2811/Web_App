@@ -12,8 +12,8 @@ import android.os.AsyncTask;
 
 public class ServerRequest extends AsyncTask<Request, Void, String>{
 	
-	//private String uri = "http://146.169.53.99:55555/s";
-	private String uri = "http://shell1.doc.ic.ac.uk:55555/s";
+	private String uri = "http://146.169.53.98:55555/s";
+	//private String uri = "http://shell1.doc.ic.ac.uk:55555/s";
 	public RequestHandler c;
 	
 	public ServerRequest(RequestHandler c) {
