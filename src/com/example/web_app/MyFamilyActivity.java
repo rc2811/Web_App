@@ -41,7 +41,8 @@ import android.widget.AdapterView.OnItemClickListener;
 @SuppressLint("NewApi")
 public class MyFamilyActivity extends Activity implements RequestHandler {
 	
-	private static final List<String> PERMISSIONS = Arrays.asList("friends_birthday", "user_photos", "friends_photos", "read_friendlists", "user_relationships");
+	private static final List<String> PERMISSIONS = Arrays.asList("friends_birthday", "user_photos", "friends_photos",
+			"read_friendlists", "user_relationships", "friends_work_history");
 	private String[] ids;
 	
 	private String TAG = "MyFamilyActivity";
@@ -175,6 +176,9 @@ public class MyFamilyActivity extends Activity implements RequestHandler {
 	@Override
 	public void doOnRequestComplete(String s) {
 		ids = s.split(":");
+		for (int i = 0; i < ids.length; i++) {
+		Log.i(TAG, ids[i].toString());
+		}
 		
 		Session session1 = Session.getActiveSession();
 		if (session1 != null && session1.isOpened()) {
