@@ -97,6 +97,7 @@ public class HomeScreenActivity extends ListActivity implements RequestHandler {
         	ServerRequest s = new ServerRequest(this);
         	s.fetchIDs(currUser);
         
+        
 
 
         }
