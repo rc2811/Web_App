@@ -19,7 +19,7 @@ public class SendMessageActivity extends Activity implements RequestHandler {
 	String currUser;
 	Spinner sendSpinner;
 	EditText messageField;
-	int reqID = 0;
+	int reqID = -1;
 	String[] friendIDs;
 	
 
@@ -49,6 +49,7 @@ public class SendMessageActivity extends Activity implements RequestHandler {
 	public void sendMessage(View view) {
 		String message = messageField.getText().toString();
 		ServerRequest servReq = new ServerRequest(this);
+		reqID = 1;
 		servReq.sendMessage(currUser, "88888888"/*sendSpinner.getSelectedItem().toString()*/, message);
 	}
 
@@ -61,7 +62,7 @@ public class SendMessageActivity extends Activity implements RequestHandler {
 			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			sendSpinner.setAdapter(adapter);
 			
-			
+			reqID = -1;
 			
 		} else if(reqID == 1) {
 			int duration = Toast.LENGTH_SHORT;
@@ -79,6 +80,7 @@ public class SendMessageActivity extends Activity implements RequestHandler {
 				Toast toast = Toast.makeText(this, result, duration);
 				toast.show();
 			}
+			reqID = -1;
 		}
 		
 		
