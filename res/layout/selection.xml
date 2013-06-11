@@ -19,6 +19,7 @@
         	android:layout_width="match_parent"
         	android:layout_height="wrap_content"
         	android:text="Find family automatically"
+        			android:textSize="25sp"
         	android:onClick="family_auto" />
     
     <Button
@@ -26,6 +27,7 @@
         	android:layout_width="match_parent"
         	android:layout_height="wrap_content"
         	android:text="Find family manually"
+        			android:textSize="25sp"
         	android:onClick="family_manual" />
     
     <Button
@@ -33,6 +35,7 @@
         	android:layout_width="match_parent"
         	android:layout_height="wrap_content"
         	android:text="Delete current family information"
+        			android:textSize="25sp"
         	android:onClick="delete_family_info" />
     
         	

@@ -189,7 +189,7 @@ public class FamilyMemberActivity extends Activity {
 						}
 						
 							
-						if (j.get("hometown_location") != null) {
+						if (!j.getString("hometown_location").equals("null")) {
 							JSONObject hometown_object = j.getJSONObject("hometown_location");
 							String hometown = hometown_object.getString("name");
 
@@ -257,7 +257,12 @@ public class FamilyMemberActivity extends Activity {
 
 					try {
 						JSONArray data = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
-						parsePhotos(data);
+						
+						Log.i(TAG, data.toString());
+						if (!data.toString().equals("[]")) {
+						
+							parsePhotos(data);
+						}
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

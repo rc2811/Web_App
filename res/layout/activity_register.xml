@@ -14,12 +14,14 @@
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:hint="@string/first_name"
+        android:textSize="25sp"
         android:paddingTop="8dp" />
     
     <EditText
         android:id="@+id/register_surname"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
+                android:textSize="25sp"
         android:hint="@string/surname"
         android:paddingTop="8dp" />
     
@@ -27,6 +29,7 @@
 		android:id="@+id/register_username"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
+                android:textSize="25sp"
         android:hint="@string/username"
         android:paddingTop="8dp" />
     
@@ -35,6 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="48dp"
 		android:inputType="textPassword"
+		        android:textSize="25sp"
         android:hint="@string/password"
         android:paddingTop="8dp" />
     
@@ -42,13 +46,9 @@
         android:id="@+id/register_confirm"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
+                android:textSize="25sp"
         android:text="@string/register"
         android:onClick="register" />
-    
-    <Spinner
-        android:id="@+id/acc_type_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:paddingTop="8dp" />
+
     
 </TableLayout>

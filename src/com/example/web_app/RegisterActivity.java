@@ -26,10 +26,7 @@ public class RegisterActivity extends Activity implements OnItemSelectedListener
 		
 		setTitle("Register");
 		setContentView(R.layout.activity_register);
-		spinner = (Spinner) findViewById(R.id.acc_type_spinner);
-		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.account_types, android.R.layout.simple_spinner_item);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		spinner.setAdapter(adapter);
+
 		
 		
 		
@@ -38,9 +35,8 @@ public class RegisterActivity extends Activity implements OnItemSelectedListener
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.register, menu);
 		
-		return true;
+		return false;
 	}
 	
 	public void register(View view) {
