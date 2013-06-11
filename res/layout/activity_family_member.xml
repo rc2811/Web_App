@@ -1,38 +1,40 @@
 
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:id="@+id/family_member_layout"
-	>
+    android:id="@+id/family_member_layout" >
 
         
-       <ImageView
-           android:id="@+id/profile_img"
-           android:layout_width="300dp"
-           android:layout_height="300dp"
-          	android:src="@drawable/title2"
-			android:paddingBottom="20dp"
-			android:onClick="displayBig"
-            />
-
+	<ImageView
+		android:id="@+id/profile_img"
+		android:layout_width="250dp"
+		android:layout_height="250dp"
+		android:layout_centerHorizontal="true"
+		android:contentDescription="profile_image"
+		android:src="@drawable/title2"
+		android:padding="10dp"
+		android:onClick="displayBig" />
+	
+	<TableLayout
+		android:id="@+id/family_member_info"
+		android:orientation="horizontal"
+		android:layout_below="@id/profile_img"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:padding="10dp" />
     
-<GridView
-    android:id="@+id/grid_view_photos"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:numColumns="2"
-    android:gravity="center"
-    android:stretchMode="columnWidth"
-    
-     >
-
-
-    
-
-</GridView>
+	<GridView
+		android:id="@+id/grid_view_photos"
+		android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+    	android:layout_below="@id/family_member_info"
+    	android:numColumns="2"
+    	android:gravity="center"
+    	android:stretchMode="columnWidth"
+    	android:padding="10dp" />
 
 
 
-</TableLayout>
+</RelativeLayout>

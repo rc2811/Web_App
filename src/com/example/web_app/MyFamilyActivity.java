@@ -41,11 +41,13 @@ import android.widget.AdapterView.OnItemClickListener;
 @SuppressLint("NewApi")
 public class MyFamilyActivity extends Activity implements RequestHandler {
 	
-	private static final List<String> PERMISSIONS = Arrays.asList("friends_birthday", "user_photos", "friends_photos", "read_friendlists", "user_relationships");
+	private static final List<String> PERMISSIONS = Arrays.asList("friends_birthday", "user_photos", "friends_photos",
+			"read_friendlists", "user_relationships", "friends_work_history");
 	private String[] ids;
 	
 	private String TAG = "MyFamilyActivity";
 	List<Drawable> profile_pics;
+	List<String> uids;
 	
 	SharedPreferences pref;
 	String currUser;
@@ -64,9 +66,9 @@ public class MyFamilyActivity extends Activity implements RequestHandler {
 
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 		StrictMode.setThreadPolicy(policy);
-	
 		
-		
+		uids = new ArrayList<String>();
+
 		Session session1 = new Session(this);
 		session1.openForRead(new Session.OpenRequest(this));
 
@@ -84,9 +86,9 @@ public class MyFamilyActivity extends Activity implements RequestHandler {
 	
 	private void getPhotos() {
 
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < ids.length; i++) {
 		
-		String fqlQuery = "select pic_big from user where uid = " + ids[i];
+		String fqlQuery = "select pic_big, uid from user where uid = " + ids[i];
 
 		Bundle params = new Bundle();
 		params.putString("q", fqlQuery);
@@ -112,6 +114,7 @@ public class MyFamilyActivity extends Activity implements RequestHandler {
 					}
 						//Log.i(TAG, photos.getJSONObject(i).getString("src"));
 						String url = null;
+						String uid = null;
 						try {
 							Log.i(TAG, photo.getString(0).toString());
 						} catch (JSONException e1) {
@@ -120,6 +123,7 @@ public class MyFamilyActivity extends Activity implements RequestHandler {
 						}
 						try {
 							url = photo.getJSONObject(0).getString("pic_big");
+							uid = photo.getJSONObject(0).getString("uid");
 
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
@@ -141,6 +145,7 @@ public class MyFamilyActivity extends Activity implements RequestHandler {
 						} else {
 						
 							profile_pics.add(d);
+							uids.add(uid);
 					} 
 					
 				}
@@ -163,7 +168,7 @@ public class MyFamilyActivity extends Activity implements RequestHandler {
 	
 	public void selectFamilyMember(int position, GridView view) {
 		Intent intent = new Intent(this, FamilyMemberActivity.class);
-		intent.putExtra("fb_id", ids[(position + 1) % ids.length]);
+		intent.putExtra("fb_id", uids.get(position));
 		startActivity(intent);
 	}
 
@@ -171,6 +176,9 @@ public class MyFamilyActivity extends Activity implements RequestHandler {
 	@Override
 	public void doOnRequestComplete(String s) {
 		ids = s.split(":");
+		for (int i = 0; i < ids.length; i++) {
+		Log.i(TAG, ids[i].toString());
+		}
 		
 		Session session1 = Session.getActiveSession();
 		if (session1 != null && session1.isOpened()) {

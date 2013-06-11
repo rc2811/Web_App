@@ -28,6 +28,7 @@
     <string name="google_Login">Google+ Login</string>
     <string name="title_activity_google_login">GoogleLoginActivity</string>
     <string name="title_activity_slideshow">SlideshowActivity</string>
+    <string name="title_test_suite_activity">Test Suite</string>
 
     <color name="light_blue">#46D8F2</color>
 
@@ -49,5 +50,7 @@
     <string name="two_users_selected">%1$s and %2$s</string>
     <string name="multiple_users_selected">%1$s and %2$s others</string>
     <string name="title_activity_full_screen_image">FullScreenImageActivity</string>
+    <string name="title_activity_messaging">Messaging</string>
+    <string name="title_activity_send_message">SendMessageActivity</string>
 
 </resources>

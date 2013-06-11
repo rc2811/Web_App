@@ -102,6 +102,18 @@
             android:name="com.example.web_app.FullScreenImageActivity"
             android:label="@string/title_activity_full_screen_image" >
         </activity>
+        <activity
+            android:name="com.example.web_app.TestSuiteActivity"
+            android:label="@string/title_test_suite_activity" >
+        </activity>
+        <activity
+            android:name="com.example.web_app.MessagingActivity"
+            android:label="@string/title_activity_messaging" >
+        </activity>
+        <activity
+            android:name="com.example.web_app.SendMessageActivity"
+            android:label="@string/title_activity_send_message" >
+        </activity>
     </application>
 
 </manifest>

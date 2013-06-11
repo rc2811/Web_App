@@ -31,6 +31,7 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
+import com.facebook.model.GraphUser;
 
 @TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class SettingsActivity extends FragmentActivity implements RequestHandler {
@@ -46,7 +47,6 @@ public class SettingsActivity extends FragmentActivity implements RequestHandler
 	String currUser;
 	
 
-	
 	private static final String TAG = "SettingsFragment";
 	
 	private static final List<String> PERMISSIONS = Arrays.asList("friends_birthday", "user_photos", "friends_photos"
@@ -59,6 +59,7 @@ public class SettingsActivity extends FragmentActivity implements RequestHandler
 		
 		uiHelper = new UiLifecycleHelper(this, callback);
 		uiHelper.onCreate(savedInstanceState);
+
 
 		setContentView(R.layout.activity_settings);
 		
@@ -74,7 +75,7 @@ public class SettingsActivity extends FragmentActivity implements RequestHandler
 	    int n = intent.getIntExtra("num_selections", 0);
 	    
 	    if (n != 0) {
-	    	Toast.makeText(getApplicationContext(), "Selected " + n + " family members", Toast.LENGTH_SHORT).show();
+	    	Toast.makeText(getApplicationContext(), "Added " + n + " family members", Toast.LENGTH_SHORT).show();
 	    }
 
 	    FragmentTransaction transaction = fm.beginTransaction();
@@ -92,6 +93,9 @@ public class SettingsActivity extends FragmentActivity implements RequestHandler
 	            transaction.show(fragments[i]);
 	        } else {
 	            transaction.hide(fragments[i]);
+	            if (i==SPLASH) {
+	            	makeMeRequest(Session.getActiveSession());
+	            }
 	        }
 	    }
 	    if (addToBackStack) {
@@ -117,6 +121,7 @@ public class SettingsActivity extends FragmentActivity implements RequestHandler
 	
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
 	    // Only make changes if the activity is visible
+
 	    if (isResumed) {
 
 	        FragmentManager manager = getSupportFragmentManager();
@@ -161,6 +166,7 @@ public class SettingsActivity extends FragmentActivity implements RequestHandler
 	    public void call(Session session, 
 	            SessionState state, Exception exception) {
 	        onSessionStateChange(session, state, exception);
+	        
 	    }
 	};
 	
@@ -316,10 +322,7 @@ public class SettingsActivity extends FragmentActivity implements RequestHandler
     			   	JSONObject j = g.getInnerJSONObject();
     			   	try {
 						JSONArray data = (JSONArray) j.get("data");
-						
-						
-						
-						
+
 						Toast.makeText(getApplicationContext(), "Found " + data.length() + " family members", Toast.LENGTH_SHORT).show();
 						String[] ids = new String[data.length()];
 						
@@ -327,14 +330,10 @@ public class SettingsActivity extends FragmentActivity implements RequestHandler
 							Log.i(TAG, data.getJSONObject(i).getString("uid"));
 
 							ids[i] = data.getJSONObject(i).getString("uid");
-
-
 						}
 						
 						addIDsToServer(ids);
-						
-						
-						
+	
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -348,7 +347,8 @@ public class SettingsActivity extends FragmentActivity implements RequestHandler
 
 	@Override
 	public void doOnRequestComplete(String s) {
-		Log.i(TAG, "inserted users ok");
+		
+		Log.i(TAG, "server request ok");
 		
 	}
 	
@@ -358,9 +358,44 @@ public class SettingsActivity extends FragmentActivity implements RequestHandler
 	
 		
 	}
+	
+	public void delete_family_info(View view) {
+		ServerRequest s = new ServerRequest(this);
+		s.clearIDs(currUser);
+		Toast.makeText(getApplicationContext(), "Deleted family information", Toast.LENGTH_SHORT).show();
+	}
 
+    
+    private void addMyIdToServer(String id) {
+    	
+    	ServerRequest s = new ServerRequest(this);
+    	s.addFBID(currUser, id);
     	
     }
+    
+    private void makeMeRequest(final Session session) {
+        // Make an API call to get user data and define a 
+        // new callback to handle the response.
+        Request request = Request.newMeRequest(session, 
+                new Request.GraphUserCallback() {
+            @Override
+            public void onCompleted(GraphUser user, Response response) {
+                // If the response is successful
+                if (session == Session.getActiveSession()) {
+                    if (user != null) {
+                        // Set the id for the ProfilePictureView
+                        // view that in turn displays the profile picture.
+                        addMyIdToServer(user.getId());
+                    }
+                }
+                if (response.getError() != null) {
+                    // Handle errors, will do so later.
+                }
+            }
+        });
+        request.executeAsync();
+    } 
+}
 
 
 

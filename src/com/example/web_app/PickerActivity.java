@@ -5,6 +5,7 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,13 +20,16 @@ import com.facebook.widget.FriendPickerFragment;
 import com.facebook.widget.PickerFragment;
 
 
-public class PickerActivity extends FragmentActivity {
+public class PickerActivity extends FragmentActivity implements RequestHandler {
 	
 	public String MESSAGE = "com.example.web_app.MESSAGE";
 	
 	
 	public static final Uri FRIEND_PICKER = Uri.parse("picker://friend");
 	private FriendPickerFragment friendPickerFragment;
+	SharedPreferences pref;
+	String currUser;
+	private String[] ids;
 	
 	
 	@Override
@@ -37,6 +41,9 @@ public class PickerActivity extends FragmentActivity {
 	    FragmentManager manager = getSupportFragmentManager();
 	    Fragment fragmentToShow = null;
 	    Uri intentUri = getIntent().getData();
+	    
+		pref = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+		currUser = pref.getString("currUser", null);
 
 	    if (FRIEND_PICKER.equals(intentUri)) {
 	        if (savedInstanceState == null) {
@@ -101,11 +108,16 @@ public class PickerActivity extends FragmentActivity {
 	    
 	    if (FRIEND_PICKER.equals(getIntent().getData())) {
 	        if (friendPickerFragment != null) {
+
+	        	
+	        	getFamilyIds(friendPickerFragment.getSelection());
+	        	
+	        	ServerRequest s = new ServerRequest(this);
+	        	s.insertIDs(currUser, ids);
+	        	
 	        	Intent intent = new Intent(this, SettingsActivity.class);
 	        	
-	        	List<String> family_ids = getFamilyIds(friendPickerFragment.getSelection());
-	        	
-	        	intent.putExtra("num_selections", family_ids.size());
+	        	intent.putExtra("num_selections", ids.length);
 
 	    	    startActivity(intent);
 
@@ -117,16 +129,18 @@ public class PickerActivity extends FragmentActivity {
 	}
 	
 	
-	private List<String> getFamilyIds(List<GraphUser> selection) {
+	private void getFamilyIds(List<GraphUser> selection) {
 		
-		List<String> ids = new ArrayList<String>();
+
+		ids = new String[selection.size()];
 		
+		int i = 0;
 		for (GraphUser g : selection) {
-			ids.add(g.getId());
+			ids[i] = g.getId();
+			i++;
 			
 		}
-		
-		return ids;
+
 		
 	}
 	
@@ -140,6 +154,12 @@ public class PickerActivity extends FragmentActivity {
 	            onError(ex);
 	        }
 	    }
+	}
+
+	@Override
+	public void doOnRequestComplete(String s) {
+		Log.i("PickerActivity", "added to server ok");
+		
 	}
 	
 	

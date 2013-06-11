@@ -240,7 +240,7 @@ public class SlideshowActivity extends Activity implements RequestHandler {
 		        public void run(){
 		            try {
 		                synchronized(this){
-		                    wait(3000);
+		                    wait(1000);
 		        			Log.i(TAG, "starting slideshow");
 		        			slideshow();
 		                }

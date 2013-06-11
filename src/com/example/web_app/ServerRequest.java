@@ -13,7 +13,7 @@ import android.os.AsyncTask;
 public class ServerRequest extends AsyncTask<Request, Void, String>{
 	
 	private String uri = "http://146.169.53.98:55555/s";
-//	private String uri = "http://shell1.doc.ic.ac.uk:55555/s";
+	//private String uri = "http://shell3.doc.ic.ac.uk:55555/s";
 	public RequestHandler c;
 	
 	//all responses returned in classes doOnRequestComplete method via post execute
@@ -80,7 +80,7 @@ public class ServerRequest extends AsyncTask<Request, Void, String>{
 	}
 
 	@Override
-	protected String doInBackground(Request... request) {
+	protected String doInBackground(Request... request) throws RuntimeException {
 		String retval = "";
 		for(Request r : request) {
 			Uri.Builder b = Uri.parse(uri).buildUpon();
@@ -90,43 +90,34 @@ public class ServerRequest extends AsyncTask<Request, Void, String>{
 	        }
 	        
 	        URL url = null;
-			try {
-				url = new URL(b.build().toString());
-			} catch (MalformedURLException e) {
-				retval += e + "\n";
-				e.printStackTrace();
-			}
 	        URLConnection connection = null;
-			try {
-				connection = url.openConnection();
-			} catch (IOException e) {
-				retval += e + "\n";
-				e.printStackTrace();
-			}
-	        
 	        BufferedReader in = null;
 			try {
+				url = new URL(b.build().toString());
+				connection = url.openConnection();
 				in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			} catch (IOException e) {
-				retval += e + "\n";
-				e.printStackTrace();
-			}
-	        
-	        try {
 				String returnString = in.readLine();
 				retval += returnString;
+			} catch (MalformedURLException e) {
+				handleException(retval, e);
 			} catch (IOException e) {
-				retval += "\n" + e;
-				e.printStackTrace();
+				handleException(retval, e);
+			} catch (RuntimeException e) {
+				handleException(retval, e);
 			}
-		}
-		
+	}
 		return retval;
 	}
 	
 	@Override
 	protected void onPostExecute(String result) {
 		c.doOnRequestComplete(result); 
+	}
+	
+	public String handleException(String s, Exception e) {
+		s += e + "\n";
+		e.printStackTrace();
+		return s;
 	}
 	
 }
