@@ -92,7 +92,6 @@ int id acc_type_spinner 0x7f05001e
 int id action_forgot_password 0x7f05004b
 int id action_settings 0x7f05004a
 int id auto_select_family 0x7f050044
-int id button1 0x7f05000f
 int id com_facebook_login_activity_progress_bar 0x7f05002e
 int id com_facebook_picker_activity_circle 0x7f05002d
 int id com_facebook_picker_checkbox 0x7f050030
@@ -119,6 +118,7 @@ int id editUsername 0x7f050009
 int id family_member_info 0x7f050005
 int id family_member_layout 0x7f050003
 int id fullscreen_image 0x7f050007
+int id goToSendMessageButton 0x7f05000f
 int id grid_view 0x7f050041
 int id grid_view_photos 0x7f050006
 int id horizontalScroll 0x7f050026

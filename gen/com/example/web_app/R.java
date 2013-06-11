@@ -241,7 +241,6 @@ containing a value of this type.
         public static final int action_forgot_password=0x7f05004b;
         public static final int action_settings=0x7f05004a;
         public static final int auto_select_family=0x7f050044;
-        public static final int button1=0x7f05000f;
         public static final int com_facebook_login_activity_progress_bar=0x7f05002e;
         public static final int com_facebook_picker_activity_circle=0x7f05002d;
         public static final int com_facebook_picker_checkbox=0x7f050030;
@@ -268,6 +267,7 @@ containing a value of this type.
         public static final int family_member_info=0x7f050005;
         public static final int family_member_layout=0x7f050003;
         public static final int fullscreen_image=0x7f050007;
+        public static final int goToSendMessageButton=0x7f05000f;
         public static final int grid_view=0x7f050041;
         public static final int grid_view_photos=0x7f050006;
         public static final int horizontalScroll=0x7f050026;

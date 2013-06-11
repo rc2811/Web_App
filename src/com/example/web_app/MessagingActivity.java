@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +26,7 @@ public class MessagingActivity extends Activity implements RequestHandler{
 	SharedPreferences pref;
 	String currUser;
 	RelativeLayout mainLayout;
-	GridLayout r;
+	RelativeLayout r;
 
 	
 	@Override
@@ -48,7 +49,7 @@ public class MessagingActivity extends Activity implements RequestHandler{
 
 	@Override
 	public void doOnRequestComplete(String s) {
-		Log.v("serevr string", s);
+		Log.v("server string", s);
 		if(s.equals("YOU HAVE NO NOTES")) {
 			Context context = getApplicationContext();
 			int duration = Toast.LENGTH_LONG;
@@ -57,16 +58,24 @@ public class MessagingActivity extends Activity implements RequestHandler{
 			
 		} else {
 			String[] messages = s.split("~");
-			r = new GridLayout(getApplicationContext());
-			//r.setColumnOrderPreserved(true);
-			r.setColumnCount(1);
+			 @SuppressWarnings("deprecation")
+			RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(
+		                RelativeLayout.LayoutParams.FILL_PARENT,
+		                RelativeLayout.LayoutParams.FILL_PARENT);
+			 rlp.addRule(RelativeLayout.ABOVE, findViewById(R.id.goToSendMessageButton).getId());
+			r = new RelativeLayout(getApplicationContext());
+			ScrollView sV = new ScrollView(getApplicationContext());
+			GridLayout g = new GridLayout(getApplicationContext());
+			g.setColumnCount(1);
 			for(String x  : messages) {
 				String y = new String(Arrays.copyOfRange(x.toCharArray(), 1, x.length()-1));
 				String[] z = y.split(",", 2);
 				String message = z[0] + ": " + z[1];
-				displayMessage(message, r);
+				displayMessage(message, g);
 			}
-			mainLayout.addView(r);
+			sV.addView(g);
+			r.addView(sV);
+			mainLayout.addView(r, rlp);
 			setContentView(mainLayout);
 			
 		}
