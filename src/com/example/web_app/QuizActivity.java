@@ -656,21 +656,24 @@ public class QuizActivity extends Activity implements OnClickListener, RequestHa
 			       		
 			       		List<String> urls = new ArrayList<String>();
 			        	JSONArray photos = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
-			        	String uid = photos.getJSONObject(0).getString("owner");
+			        	String uid = null;
 			        	
-			        	for (int i = 0; i < photos.length(); i++) {
+			        	if (!photos.toString().equals("[]")) {
+			        	
+			        		uid = photos.getJSONObject(0).getString("owner");
+			        	
+			        		for (int i = 0; i < photos.length(); i++) {
 
 
-							String url = photos.getJSONObject(i).getString("src_big");
-						//	Log.i(TAG, photos.getJSONObject(i).getString("src_big"));
-							urls.add(url);
+			        			String url = photos.getJSONObject(i).getString("src_big");
+			        			//	Log.i(TAG, photos.getJSONObject(i).getString("src_big"));
+								urls.add(url);
 						
+			        		}
 			        	}
 
 						addPhotosToUser(urls, uid);
 
-
-						
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

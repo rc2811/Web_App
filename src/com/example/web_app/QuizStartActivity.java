@@ -56,8 +56,8 @@ public class QuizStartActivity extends Activity implements RequestHandler {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.quiz_start, menu);
-		return true;
+		//getMenuInflater().inflate(R.menu.quiz_start, menu);
+		return false ;
 	}
 	
 	
@@ -93,7 +93,7 @@ public class QuizStartActivity extends Activity implements RequestHandler {
 				num_questions_string = t.toString();
 			}
 		
-			if (num_questions_string != "") {
+			if (!num_questions_string.equals("")) {
 				num_questions = Integer.parseInt(num_questions_string);
 		
 				if (num_questions < 0 || num_questions > 20) {
@@ -105,6 +105,9 @@ public class QuizStartActivity extends Activity implements RequestHandler {
 					startActivity(intent);
 				
 				}
+			} else {
+				
+				Toast.makeText(this, "Please enter a number between 1 and 20 inclusive", Toast.LENGTH_SHORT).show();
 			}
 	
 		

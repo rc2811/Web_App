@@ -22,17 +22,18 @@
 
     
 	<EditText
-
 		android:id="@+id/editUsername"
-		android:layout_width="0dp"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:textSize="25sp"
 		android:hint="@string/username" />
 
 	<EditText
 		android:id="@+id/editPassword"
 		android:inputType="textPassword"
-		android:layout_width="0dp"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:textSize="25sp"
 		android:hint="@string/password" />
 	
 	<CheckBox
@@ -40,6 +41,7 @@
          android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
          android:text="Remember me" 
+         android:textSize="25sp"
          android:onClick="rememberUser"/>
 	
     <Button
@@ -47,6 +49,7 @@
         android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
         android:onClick="getAccountInfo"
+        		android:textSize="25sp"
         android:text="@string/login" />
     
     <Button 
@@ -54,6 +57,7 @@
         android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
         android:onClick="register"
+        		android:textSize="25sp"
         android:text="@string/register" />
     
  
