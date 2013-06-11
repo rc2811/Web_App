@@ -1,19 +1,28 @@
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.sql.*;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
 public class Servlet extends HttpServlet {
+	
+	private static final long serialVersionUID = 1L;
 	
 	private static final String dbPassKey = "password";
 	private static final String dbUserKey = "username";
 	private static final String dbFIDKey = "friendids";
 	private static final String dbFBKey = "fbid";
 	private static final String dbMessageKey = "notes";
-	
-	private static final long serialVersionUID = 1L;
 	
 	private Connection conn;
 	
@@ -35,8 +44,7 @@ public class Servlet extends HttpServlet {
  
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
     {
-        
-		try
+    	try
 		{
 
 			Statement stmt;
@@ -98,15 +106,21 @@ checkInput: 	{
 			}
 			else if(command.equals(Command.FETCHIDS.toString()))
 			{
-				rs = stmt.executeQuery("SELECT * FROM userdata WHERE " + dbUserKey + " = '" + arguments[0] + "';");
+				rs = stmt.executeQuery("SELECT " + dbFIDKey + " FROM userdata WHERE " + dbUserKey + " = '" + arguments[0] + "';");
 				rs.next();
-				Long[] array = (Long[])rs.getArray(dbFIDKey).getArray();
-				
-				reply = "";
+				try {
+					
+					Long[] array = (Long[])rs.getArray(dbFIDKey).getArray();				
+					reply = "";
 
-				for(long i : array)
-				{
-					reply += i + ":";
+					for(long i : array)
+					{
+						reply += i + ":";
+					}
+					
+				} catch (NullPointerException e) {
+						
+					reply = "YOU HAVE NO FRIENDS";
 				}
 			}
 			else if(command.equals(Command.INSERTIDS.toString()))
@@ -119,8 +133,8 @@ checkInput: 	{
 				}
 				else if(arguments.length > 1)
 				{
-					pstmt = conn.prepareStatement("UPDATE userdata SET " + dbFIDKey + " = " +
-												dbFIDKey + " || " + prepareToPrintWithRemoval(arguments) +
+					pstmt = conn.prepareStatement("UPDATE userdata SET " + dbFIDKey + " = array_sort_unique(" +
+												dbFIDKey + " || " + prepareToPrintWithRemoval(arguments) + "::bigint[])" +
 												" WHERE " + dbUserKey + " = '" + arguments[0] + "';");
 					pstmt.executeUpdate();
 				}
@@ -170,32 +184,35 @@ checkInput: 	{
 			else if(command.equals(Command.GETMESSAGES.toString()))
 			{
 				rs = stmt.executeQuery("SELECT array_to_string(" + dbMessageKey + ", '~') FROM userdata WHERE " + dbUserKey + " = '" + arguments[0] + "';");
-				if(!rs.next())
+				if(!rs.next() || (reply = rs.getString("array_to_string")) == null || reply.isEmpty())
 				{
 					reply = "YOU HAVE NO NOTES";
 				}
-				else
-				{
-					reply = rs.getString("array_to_string");
-				}
-				System.out.println(reply);
+			}
+			else if(command.equals(Command.DELETEMESSAGE.toString()))
+			{
+				pstmt = conn.prepareStatement("UPDATE userdata SET " + dbMessageKey + 
+												" = array_remove_item (" + dbMessageKey + ", " + arguments[1] +
+												") WHERE " + dbUserKey + " = '" + arguments[0] + "';");
+				pstmt.executeUpdate();
+				reply = "OK";
+
 			}
 			else
 			{
 				reply = "UNKNOWN COMMAND";
 			}
 			
-			
-			response.setStatus(HttpServletResponse.SC_OK);
-			
+	    	response.setStatus(HttpServletResponse.SC_OK);
 			OutputStreamWriter writer = new OutputStreamWriter(response.getOutputStream());
-        
+	    
 			writer.write(reply);
-			writer.flush();
 			writer.close();
 			
 		} catch (SQLException e) {
 				e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
     }
     
@@ -207,9 +224,5 @@ checkInput: 	{
     private String prepareToPrint(Object[] args)
     {
     	return "ARRAY" + Arrays.toString(args);
-    }
-
-    public enum Command {
-    	LOGIN, REGISTER, FETCHIDS, INSERTIDS, ADDFBID, SENDMESSAGETO, GETMESSAGES, CLEARIDS
     }
 }
