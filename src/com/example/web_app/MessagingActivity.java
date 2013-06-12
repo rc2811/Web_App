@@ -1,6 +1,9 @@
 package com.example.web_app;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Random;
 
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
@@ -27,11 +30,14 @@ public class MessagingActivity extends Activity implements RequestHandler{
 	String currUser;
 	RelativeLayout mainLayout;
 	RelativeLayout r;
+	int[] colors = new int[] {Color.RED, Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.YELLOW};
+	Map<String, Integer> name_colors_map = new LinkedHashMap<String, Integer>();
 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setTitle("Your Notes");
 		pref = getSharedPreferences(PREFS_NAME,MODE_PRIVATE);
 		currUser = pref.getString(PREFF_CURR_USER, null);
 		LayoutInflater inflater = getLayoutInflater();
@@ -67,11 +73,12 @@ public class MessagingActivity extends Activity implements RequestHandler{
 			ScrollView sV = new ScrollView(getApplicationContext());
 			GridLayout g = new GridLayout(getApplicationContext());
 			g.setColumnCount(1);
-			for(String x  : messages) {
-				String y = new String(Arrays.copyOfRange(x.toCharArray(), 1, x.length()-1));
+			for(int i = messages.length - 1; i >=0; i--) {
+				String y = new String(Arrays.copyOfRange(messages[i].toCharArray(), 1, messages[i].length()-1));
 				String[] z = y.split(",", 2);
-				String message = z[0] + ": " + z[1];
-				displayMessage(message, g);
+				String sender = z[0];
+				String message = z[1];
+				displayMessage(sender, message, g);
 			}
 			sV.addView(g);
 			r.addView(sV);
@@ -94,13 +101,22 @@ public class MessagingActivity extends Activity implements RequestHandler{
 		servReq.getMessages(currUser);
 	}
 	
-	public void displayMessage(String s, GridLayout l) {
+	public void displayMessage(String s, String m, GridLayout l) {
 		TextView t = new TextView(getApplicationContext());
 		t.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		//t.setBackgroundColor(Color.RED);
 		t.setTextSize(50);
-		t.setTextColor(Color.RED);
-		t.setText(s);
+		if(!name_colors_map.containsKey(s)) {
+			Random r = new Random();
+			int c = r.nextInt(6);
+			while(name_colors_map.containsValue(colors[c]) && name_colors_map.size() < 6){
+				c = r.nextInt(6);
+			}
+			name_colors_map.put(s, colors[c]);
+
+		}
+		t.setTextColor(name_colors_map.get(s));
+		t.setText(s + ": " + m);
 		l.addView(t);
 	}
 

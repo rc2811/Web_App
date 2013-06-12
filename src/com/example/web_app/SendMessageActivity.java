@@ -26,6 +26,7 @@ public class SendMessageActivity extends Activity implements RequestHandler {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setTitle("Send a new message");
 		setContentView(R.layout.activity_send_message);
 		
 		pref = getSharedPreferences(PREFS_NAME,MODE_PRIVATE);
