@@ -198,6 +198,19 @@ checkInput: 	{
 				reply = "OK";
 
 			}
+			else if(command.equals(Command.GETFRIENDS.toString()))
+			{
+				rs = stmt.executeQuery("SELECT " + dbUserKey + " FROM logins WHERE " + dbFBKey + "::bigint = " +
+							"ANY((SELECT " + dbFIDKey + " FROM userdata WHERE " + dbUserKey + " = '" + arguments[0] + "')::bigint[]);");
+				
+				reply = "";
+
+				while(rs.next())
+				{
+					reply += rs.getString(dbUserKey) + "~";
+				}
+
+			}
 			else
 			{
 				reply = "UNKNOWN COMMAND";
