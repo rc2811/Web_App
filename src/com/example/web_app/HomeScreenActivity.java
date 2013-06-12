@@ -43,7 +43,7 @@ public class HomeScreenActivity extends ListActivity implements RequestHandler {
 		HOME_SCREEN_MAP.put("Messaging", MessagingActivity.class.getName());
 		HOME_SCREEN_MAP.put("Settings", SettingsActivity.class.getName());
 		HOME_SCREEN_MAP.put("Logout", MainActivity.class.getName());
-		HOME_SCREEN_MAP.put("Test Suite", TestSuiteActivity.class.getName());
+		//HOME_SCREEN_MAP.put("Test Suite", TestSuiteActivity.class.getName());
 	}
 	
 

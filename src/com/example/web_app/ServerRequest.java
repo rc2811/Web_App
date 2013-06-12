@@ -12,8 +12,8 @@ import android.os.AsyncTask;
 
 public class ServerRequest extends AsyncTask<Request, Void, String>{
 	
-	private String uri = "http://146.169.53.98:55555/s";
-	//private String uri = "http://shell3.doc.ic.ac.uk:55555/s";
+	private String uri = "http://146.169.53.97:55555/s";
+	//private String uri = "http://shell1.doc.ic.ac.uk:55555/s";
 	public RequestHandler c;
 	
 	//all responses returned in classes doOnRequestComplete method via post execute
@@ -66,9 +66,9 @@ public class ServerRequest extends AsyncTask<Request, Void, String>{
 	}
 	
 	//insert message from sender to recipientFBID
-	public void sendMessage(String sender, String recipientFBID, String message) {
+	public void sendMessage(String sender, String friendName, String message) {
 		if(message != "") {
-			Request request = new Request(Command.SENDMESSAGETO, new String[] {sender, recipientFBID, message});
+			Request request = new Request(Command.SENDMESSAGETO, new String[] {sender, friendName, message});
 			execute(request);
 		}
 	}
@@ -76,6 +76,12 @@ public class ServerRequest extends AsyncTask<Request, Void, String>{
 	//get messages sent to username. Format is string of ("sender", "message")~("sender2", "message2") etc
 	public void getMessages(String username) {
 		Request request = new Request(Command.GETMESSAGES, new String[] {username});
+		execute(request);
+	}
+	
+	//return array of names of friends of username. No friends returns NO FRIENDS;
+	public void getFriends(String username) {
+		Request request = new Request(Command.GETFRIENDS, new String[] {username});
 		execute(request);
 	}
 
