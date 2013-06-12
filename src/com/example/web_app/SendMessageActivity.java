@@ -20,12 +20,13 @@ public class SendMessageActivity extends Activity implements RequestHandler {
 	Spinner sendSpinner;
 	EditText messageField;
 	int reqID = -1;
-	String[] friendIDs;
+	String[] friends;
 	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setTitle("Send a new message");
 		setContentView(R.layout.activity_send_message);
 		
 		pref = getSharedPreferences(PREFS_NAME,MODE_PRIVATE);
@@ -36,7 +37,7 @@ public class SendMessageActivity extends Activity implements RequestHandler {
 		
 		ServerRequest servReq = new ServerRequest(this);
 		reqID = 0;
-		servReq.fetchIDs(currUser);
+		servReq.getFriends(currUser);
 	}
 
 	@Override
@@ -50,15 +51,16 @@ public class SendMessageActivity extends Activity implements RequestHandler {
 		String message = messageField.getText().toString();
 		ServerRequest servReq = new ServerRequest(this);
 		reqID = 1;
-		servReq.sendMessage(currUser, "88888888"/*sendSpinner.getSelectedItem().toString()*/, message);
+		servReq.sendMessage(currUser, sendSpinner.getSelectedItem().toString(), message);
 	}
 
 	@Override
 	public void doOnRequestComplete(String s) {
 		if(reqID == 0 ) {
-			friendIDs = s.split(":");
+			friends = s.split("~");
 			
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, friendIDs);
+			//populate send to dropdown options
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, friends);
 			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			sendSpinner.setAdapter(adapter);
 			
