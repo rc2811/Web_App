@@ -95,7 +95,7 @@ checkInput: 	{
 						}
 					}
 					
-				pstmt = conn.prepareStatement("INSERT into logins VALUES('"+ arguments[0] + "', '" + BCrypt.hashpw(arguments[1], BCrypt.gensalt()) + "', " + Integer.parseInt(arguments[2]) + ");");
+				pstmt = conn.prepareStatement("INSERT into logins VALUES('"+ arguments[0] + "', '" + BCrypt.hashpw(arguments[1], BCrypt.gensalt()) + "');");
 				pstmt.executeUpdate();
 				
 				pstmt = conn.prepareStatement("INSERT into userdata VALUES('" + arguments[0] + "');");
@@ -165,14 +165,12 @@ checkInput: 	{
 			}
 			else if(command.equals(Command.SENDMESSAGETO.toString()))
 			{
-				rs = stmt.executeQuery("SELECT " + dbUserKey + " FROM logins WHERE " + dbFBKey + " = '" + arguments[1] + "';");
+				rs = stmt.executeQuery("SELECT * FROM logins WHERE " + dbUserKey + " = '" + arguments[1] + "';");
 				if(rs.next())
 				{
-					String recipient = rs.getString(dbUserKey);
-					
 					pstmt = conn.prepareStatement("UPDATE userdata" + " SET " + dbMessageKey + " = " +
 							dbMessageKey + " || " + "ROW( '" + arguments[0] + "' , '" + arguments[2] + "' )::fridgenote" +
-							" WHERE " + dbUserKey + " = '" + recipient + "';");
+							" WHERE " + dbUserKey + " = '" + arguments[1] + "';");
 					pstmt.executeUpdate();
 					reply = "OK";
 				}
@@ -209,6 +207,9 @@ checkInput: 	{
 				{
 					reply += rs.getString(dbUserKey) + "~";
 				}
+				
+				if("".equals(reply))
+					reply = "NO FRIENDS";
 
 			}
 			else
