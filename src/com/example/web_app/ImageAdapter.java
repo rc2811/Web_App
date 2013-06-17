@@ -64,7 +64,7 @@ public class ImageAdapter extends BaseAdapter implements ListAdapter {
         if (convertView == null) {  // if it's not recycled, initialize some attributes
         
             imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(600, 600));
+            imageView.setLayoutParams(new GridView.LayoutParams(400, 400));
         	imageView.setImageDrawable(s);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 

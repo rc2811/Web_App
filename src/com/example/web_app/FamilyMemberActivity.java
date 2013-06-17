@@ -76,7 +76,6 @@ public class FamilyMemberActivity extends Activity {
 
 		Session.setActiveSession(session1);
 
-
 		if (session1 != null && session1.isOpened()) {
 			Log.i(TAG, "session ok");
 			getUserData(id);
@@ -173,6 +172,7 @@ public class FamilyMemberActivity extends Activity {
 
 							TextView textView = new TextView(this);
 							textView.setText("Birthday: " + birthday);
+							textView.setTextSize(30);
 							Log.i(TAG, "Got birthday " + name);
 							
 							TableLayout layout = (TableLayout) findViewById(R.id.family_member_info);
@@ -182,6 +182,7 @@ public class FamilyMemberActivity extends Activity {
 						if (!name.equals("null")) {
 							TextView textView = new TextView(this);
 							textView.setText(name);
+							textView.setTextSize(30);
 							Log.i(TAG, "Got name " + name);
 							
 							setTitle(name);
@@ -195,6 +196,7 @@ public class FamilyMemberActivity extends Activity {
 
 
 							TextView textView = new TextView(this);
+							textView.setTextSize(30);
 							textView.setText("Hometown: " + hometown);	
 							Log.i(TAG, "Got hometown " + name);
 							
@@ -211,7 +213,8 @@ public class FamilyMemberActivity extends Activity {
 									JSONObject school = result.getJSONObject("school");
 									String school_name = school.getString("name");
 									TextView textView = new TextView(this);
-									textView.setText("High School: " + school_name);
+									textView.setTextSize(30);
+									textView.setText("School: " + school_name);
 									
 									TableLayout layout = (TableLayout) findViewById(R.id.family_member_info);
 									layout.addView(textView);
@@ -220,6 +223,7 @@ public class FamilyMemberActivity extends Activity {
 									JSONObject school = result.getJSONObject("school");
 									String school_name = school.getString("name");
 									TextView textView = new TextView(this);
+									textView.setTextSize(30);
 									textView.setText("University: " + school_name);
 									
 									TableLayout layout = (TableLayout) findViewById(R.id.family_member_info);

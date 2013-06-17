@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -26,8 +27,8 @@ public class SendMessageActivity extends Activity implements RequestHandler {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setTitle("Send a new message");
 		setContentView(R.layout.activity_send_message);
+		setTitle("Send a message");
 		
 		pref = getSharedPreferences(PREFS_NAME,MODE_PRIVATE);
 		currUser = pref.getString(PREFF_CURR_USER, null);
@@ -43,8 +44,20 @@ public class SendMessageActivity extends Activity implements RequestHandler {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.send_message, menu);
-		return true;
+		return false;
+	}
+	
+	@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    super.onKeyDown(keyCode, event);
+        switch(keyCode)
+        {
+        case KeyEvent.KEYCODE_BACK:
+         
+            finishActivity(0);
+            return true;
+        }
+        return false;
 	}
 	
 	public void sendMessage(View view) {
@@ -75,8 +88,7 @@ public class SendMessageActivity extends Activity implements RequestHandler {
 				next = (MessagingActivity.class);
 				Toast toast = Toast.makeText(this, result, duration);
 				toast.show();
-				Intent intent = new Intent(this, next);
-				startActivity(intent);
+				finishActivity(0);
 			} else {
 				result = s;
 				Toast toast = Toast.makeText(this, result, duration);
