@@ -3,6 +3,7 @@ package com.example.web_app;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -27,8 +28,19 @@ public class QuizResultsActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.quiz_results, menu);
-		return true;
+		return false;
+	}
+	
+	@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    super.onKeyDown(keyCode, event);
+        switch(keyCode)
+        {
+        case KeyEvent.KEYCODE_BACK:
+   
+            return false;
+        }
+        return false;
 	}
 	
 	public void backToMenu(View view) {

@@ -94,8 +94,15 @@ public class HomeScreenActivity extends ListActivity implements RequestHandler {
         	
         } else {
         	
-        	ServerRequest s = new ServerRequest(this);
-        	s.fetchIDs(currUser);
+        	if (Session.getActiveSession() != null) {
+        	
+        		ServerRequest s = new ServerRequest(this);
+        		s.fetchIDs(currUser);
+        		
+        	} else {
+        		Toast.makeText(getApplicationContext(), "You need to login with Facebook in the settings menu first",
+        						Toast.LENGTH_SHORT).show();
+        	}
         
         
 
@@ -112,6 +119,7 @@ public class HomeScreenActivity extends ListActivity implements RequestHandler {
         case KeyEvent.KEYCODE_BACK:
         	Toast.makeText(this, "Select the Logout button to log out", Toast.LENGTH_SHORT).show();
          
+        
             return false;
         }
         return false;
@@ -120,14 +128,18 @@ public class HomeScreenActivity extends ListActivity implements RequestHandler {
 	@Override
 	public void doOnRequestComplete(String s) {
     	
-		Log.i("HomeScreenActivity", s);
+		
+		
+	//	Log.i("HomeScreenActivity", Session.getActiveSession());
 		
 		if (!s.equals("YOU HAVE NO FRIENDS")) {
 			
     		Intent intent = (Intent) map.get(INTENT_KEY);
     		startActivity(intent);
+    		
 		} else {
 			Toast.makeText(this, "Select the 'Settings' option to log in with Facebook first.", Toast.LENGTH_SHORT).show();
+		}
 		}
 	
     	/*
@@ -145,7 +157,7 @@ public class HomeScreenActivity extends ListActivity implements RequestHandler {
 	}
 
 	
-}
+
 
 
 

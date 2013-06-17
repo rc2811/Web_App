@@ -18,7 +18,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.example.web_app.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name" 
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,43 +29,54 @@
         <activity
             android:name="com.example.web_app.LoginActivity"
             android:label="@string/title_activity_login"
-            android:windowSoftInputMode="adjustResize|stateVisible" >
+            android:windowSoftInputMode="adjustResize|stateVisible"
+                        android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.example.web_app.HomeScreenActivity"
-            android:label="@string/title_activity_home_screen" >
+            android:label="@string/title_activity_home_screen"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.example.web_app.SettingsActivity"
-            android:label="@string/title_activity_settings" >
+            android:label="@string/title_activity_settings"
+                        android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.example.web_app.Register"
-            android:label="@string/title_activity_register" >
+            android:label="@string/title_activity_register"
+                        android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.example.web_app.RegisterActivity"
-            android:label="@string/title_activity_register" >
+            android:label="@string/title_activity_register"
+                        android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.example.web_app.MyFamilyActivity"
-            android:label="@string/title_activity_my_family" >
+            android:label="@string/title_activity_my_family"
+                        android:screenOrientation="portrait"
+             >
         </activity>
         <activity
             android:name="com.example.web_app.FamilyMemberActivity"
-            android:label="@string/title_activity_family_member" >
+            android:label="@string/title_activity_family_member"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.example.web_app.QuizActivity"
-            android:label="@string/title_activity_quiz" >
+            android:label="@string/title_activity_quiz"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.example.web_app.QuizStartActivity"
-            android:label="@string/title_activity_quiz_start" >
+            android:label="@string/title_activity_quiz_start"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.example.web_app.GoogleLoginActivity"
-            android:label="@string/title_activity_google_login" >
+            android:label="@string/title_activity_google_login"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.example.web_app.SlideshowActivity"
@@ -72,7 +84,8 @@
         </activity>
         <activity
             android:name="com.example.web_app.QuizResultsActivity"
-            android:label="@string/title_activity_quiz_results" >
+            android:label="@string/title_activity_quiz_results"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.example.web_app.ParseJSON"
@@ -85,34 +98,41 @@
 
         <activity
             android:name="com.facebook.LoginActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.example.web_app.FacebookLoginActivity"
-            android:label="@string/title_activity_facebook_login" >
+            android:label="@string/title_activity_facebook_login"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.example.web_app.MainFragment"
-            android:label="@string/title_activity_main_fragment" >
+            android:label="@string/title_activity_main_fragment"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.example.web_app.PickerActivity"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.example.web_app.FullScreenImageActivity"
             android:label="@string/title_activity_full_screen_image" >
         </activity>
         <activity
             android:name="com.example.web_app.TestSuiteActivity"
-            android:label="@string/title_test_suite_activity" >
+            android:label="@string/title_test_suite_activity"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.example.web_app.MessagingActivity"
-            android:label="@string/title_activity_messaging" >
+            android:label="@string/title_activity_messaging"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.example.web_app.SendMessageActivity"
-            android:label="@string/title_activity_send_message" >
+            android:label="@string/title_activity_send_message"
+            android:screenOrientation="portrait" >
         </activity>
     </application>
 
