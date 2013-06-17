@@ -9,8 +9,8 @@
         
 	<ImageView
 		android:id="@+id/profile_img"
-		android:layout_width="250dp"
-		android:layout_height="250dp"
+		android:layout_width="300dp"
+		android:layout_height="300dp"
 		android:layout_centerHorizontal="true"
 		android:contentDescription="profile_image"
 		android:src="@drawable/title2"
@@ -28,9 +28,9 @@
 	<GridView
 		android:id="@+id/grid_view_photos"
 		android:layout_width="fill_parent"
-    	android:layout_height="fill_parent"
+    	android:layout_height="350dp"
     	android:layout_below="@id/family_member_info"
-    	android:numColumns="2"
+    	android:numColumns="1"
     	android:gravity="center"
     	android:stretchMode="columnWidth"
     	android:padding="10dp" />

@@ -19,24 +19,27 @@
         	android:layout_width="match_parent"
         	android:layout_height="wrap_content"
         	android:text="Find family automatically"
-        			android:textSize="25sp"
-        	android:onClick="family_auto" />
+        			android:textSize="40sp"
+        	android:onClick="family_auto"
+        			android:padding="10dp" />
     
     <Button
         	android:id="@+id/manual_select_family"
         	android:layout_width="match_parent"
         	android:layout_height="wrap_content"
         	android:text="Find family manually"
-        			android:textSize="25sp"
-        	android:onClick="family_manual" />
+        			android:textSize="40sp"
+        	android:onClick="family_manual"
+        			android:padding="10dp" />
     
     <Button
         	android:id="@+id/delete_family_info"
         	android:layout_width="match_parent"
         	android:layout_height="wrap_content"
         	android:text="Delete current family information"
-        			android:textSize="25sp"
-        	android:onClick="delete_family_info" />
+        			android:textSize="40sp"
+        	android:onClick="delete_family_info"
+        			android:padding="10dp" />
     
         	
 

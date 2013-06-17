@@ -1,10 +1,13 @@
 package com.example.web_app;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+
 
 import com.facebook.Session;
 import com.facebook.SessionState;
@@ -26,6 +29,9 @@ import android.widget.Toast;
 
 @TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class HomeScreenActivity extends ListActivity implements RequestHandler {
+	
+	private static final List<String> PERMISSIONS = Arrays.asList("friends_birthday", "user_photos",
+			 "friends_education_history", "friends_photos", "friends_hometown");
 	
     private static final String FROM_TITLE = "title";
     private static final String TITLE_KEY = "title";
@@ -60,7 +66,6 @@ public class HomeScreenActivity extends ListActivity implements RequestHandler {
 			
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 		StrictMode.setThreadPolicy(policy);
-
 		
 	}
 
@@ -94,18 +99,19 @@ public class HomeScreenActivity extends ListActivity implements RequestHandler {
         	
         } else {
         	
-        	if (Session.getActiveSession() != null) {
+        	Session session = new Session(this);
         	
-        		ServerRequest s = new ServerRequest(this);
-        		s.fetchIDs(currUser);
-        		
-        	} else {
-        		Toast.makeText(getApplicationContext(), "You need to login with Facebook in the settings menu first",
-        						Toast.LENGTH_SHORT).show();
-        	}
-        
-        
-
+        	Log.i("tag", session.toString());
+        	
+        	
+        		if (!session.getPermissions().toString().equals("[]")) {
+        	      	
+        			ServerRequest servReq = new ServerRequest(this);
+        			servReq.fetchIDs(currUser);
+        		} else {
+        			
+        			Toast.makeText(this, "Login with Facebook in the settings menu first", Toast.LENGTH_SHORT).show();
+        		}
 
         }
     }
@@ -119,7 +125,6 @@ public class HomeScreenActivity extends ListActivity implements RequestHandler {
         case KeyEvent.KEYCODE_BACK:
         	Toast.makeText(this, "Select the Logout button to log out", Toast.LENGTH_SHORT).show();
          
-        
             return false;
         }
         return false;
@@ -138,7 +143,7 @@ public class HomeScreenActivity extends ListActivity implements RequestHandler {
     		startActivity(intent);
     		
 		} else {
-			Toast.makeText(this, "Select the 'Settings' option to log in with Facebook first.", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Add some family members in the Settings menu first", Toast.LENGTH_SHORT).show();
 		}
 		}
 	

@@ -96,7 +96,7 @@ public class QuizStartActivity extends Activity implements RequestHandler {
 			if (!num_questions_string.equals("")) {
 				num_questions = Integer.parseInt(num_questions_string);
 		
-				if (num_questions < 0 || num_questions > 20) {
+				if (num_questions <= 0 || num_questions > 20) {
 					Toast.makeText(this, "Please enter a number between 1 and 20 inclusive", Toast.LENGTH_SHORT).show();
 
 				} else {

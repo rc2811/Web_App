@@ -50,9 +50,8 @@ public class RegisterActivity extends Activity implements OnItemSelectedListener
 		//String surnameString = surname.getText().toString();
 		String usernameString = username.getText().toString();
 		String passwordString = password.getText().toString(); 
-		String acc_type = "" + spinner.getSelectedItemPosition();
 		
-		Request request = new Request(Command.REGISTER, new String[] {usernameString, passwordString, acc_type});
+		Request request = new Request(Command.REGISTER, new String[] {usernameString, passwordString});
 		ServerRequest servReq = new ServerRequest(this);
 		servReq.execute(request);
 		

@@ -1,6 +1,5 @@
 package com.example.web_app;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -14,6 +13,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -108,6 +108,21 @@ public class MessagingActivity extends Activity implements RequestHandler{
 			}
 		}
 	}
+	
+	
+	@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    super.onKeyDown(keyCode, event);
+        switch(keyCode)
+        {
+        case KeyEvent.KEYCODE_BACK:
+         
+            finishActivity(0);
+            return true;
+        }
+        return false;
+	}
+	
 	
 	public void sendMessage(View view) {
 		Intent intent = new Intent(this, SendMessageActivity.class);

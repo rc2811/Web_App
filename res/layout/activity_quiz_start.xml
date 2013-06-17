@@ -12,15 +12,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="@string/number_of_questions"
-        android:textSize="25sp"
-        android:id="@+id/num_questions" />
+        android:textSize="40sp"
+        android:id="@+id/num_questions"
+        android:padding="40dp" />
     
     
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/start"
-        android:textSize="25sp"
+        android:textSize="40sp"
         android:onClick="quiz" />
 
 </TableLayout>

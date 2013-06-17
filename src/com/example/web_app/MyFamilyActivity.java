@@ -193,6 +193,7 @@ public class MyFamilyActivity extends Activity implements RequestHandler {
 		final GridView gridView = (GridView) findViewById(R.id.grid_view);
 
 		gridView.setAdapter(new ImageAdapter(this, profile_pics));
+		
 
 
 	    gridView.setOnItemClickListener(new OnItemClickListener() {
