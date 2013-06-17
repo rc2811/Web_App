@@ -79,6 +79,12 @@ public class ServerRequest extends AsyncTask<Request, Void, String>{
 		execute(request);
 	}
 	
+	//delete a message
+	public void deleteMessage(String username, String text) {
+		Request request = new Request(Command.DELETEMESSAGE, new String[] {username, text});
+		execute(request);
+	}
+	
 	//return array of names of friends of username. No friends returns NO FRIENDS;
 	public void getFriends(String username) {
 		Request request = new Request(Command.GETFRIENDS, new String[] {username});

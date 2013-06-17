@@ -60,8 +60,8 @@ public class SendMessageActivity extends Activity implements RequestHandler {
 			friends = s.split("~");
 			
 			//populate send to dropdown options
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, friends);
-			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinnerlayout, friends);
+			adapter.setDropDownViewResource(R.layout.spinnerlayout);
 			sendSpinner.setAdapter(adapter);
 			
 			reqID = -1;

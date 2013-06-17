@@ -1,5 +1,6 @@
 package com.example.web_app;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,6 +33,8 @@ public class MessagingActivity extends Activity implements RequestHandler{
 	RelativeLayout r;
 	int[] colors = new int[] {Color.RED, Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.YELLOW};
 	Map<String, Integer> name_colors_map = new LinkedHashMap<String, Integer>();
+	ArrayList<String> msgToDelete = new ArrayList<String>();
+	int requestNum;
 
 	
 	@Override
@@ -43,6 +46,7 @@ public class MessagingActivity extends Activity implements RequestHandler{
 		LayoutInflater inflater = getLayoutInflater();
 		mainLayout = (RelativeLayout) inflater.inflate(R.layout.activity_messaging,null);
 		setContentView(R.layout.activity_messaging);
+		requestNum = 0;
 		getMessages();
 	}
 
@@ -55,44 +59,66 @@ public class MessagingActivity extends Activity implements RequestHandler{
 	@Override
 	public void doOnRequestComplete(String s) {
 		Log.v("server string", s);
-		if(s.equals("YOU HAVE NO NOTES")) {
-			Context context = getApplicationContext();
-			int duration = Toast.LENGTH_LONG;
-			Toast toast = Toast.makeText(context, s, duration);
-			toast.show();
-			
-		} else {
-			String[] messages = s.split("~");
-			 @SuppressWarnings("deprecation")
-			RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(
-		                RelativeLayout.LayoutParams.FILL_PARENT,
-		                RelativeLayout.LayoutParams.FILL_PARENT);
-			 rlp.addRule(RelativeLayout.ABOVE, findViewById(R.id.goToSendMessageButton).getId());
-			r = new RelativeLayout(getApplicationContext());
-			ScrollView sV = new ScrollView(getApplicationContext());
-			GridLayout g = new GridLayout(getApplicationContext());
-			g.setColumnCount(1);
-			for(int i = messages.length - 1; i >=0; i--) {
-				String y = new String(Arrays.copyOfRange(messages[i].toCharArray(), 1, messages[i].length()-1));
-				String[] z = y.split(",", 2);
-				String sender = z[0];
-				String message = z[1];
-				displayMessage(sender, message, g);
+		if(requestNum == 1) {
+			msgToDelete.remove(0);
+			if(!msgToDelete.isEmpty()) {
+				deleteMessages();
+			} else {
+				requestNum = -1;
 			}
-			sV.addView(g);
-			r.addView(sV);
-			mainLayout.addView(r, rlp);
-			setContentView(mainLayout);
-			
 		}
+		if(requestNum == 0) {
+			if(s.equals("YOU HAVE NO NOTES")) {
+				Context context = getApplicationContext();
+				int duration = Toast.LENGTH_LONG;
+				Toast toast = Toast.makeText(context, s, duration);
+				toast.show();
+				
+			} else {
+				String[] messages = s.split("~");
+				 @SuppressWarnings("deprecation")
+				RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(
+			                RelativeLayout.LayoutParams.FILL_PARENT,
+			                RelativeLayout.LayoutParams.FILL_PARENT);
+				 rlp.addRule(RelativeLayout.ABOVE, findViewById(R.id.goToSendMessageButton).getId());
+				r = new RelativeLayout(getApplicationContext());
+				ScrollView sV = new ScrollView(getApplicationContext());
+				GridLayout g = new GridLayout(getApplicationContext());
+				g.setColumnCount(1);
+				for(int i = messages.length - 1; i >=0; i--) {
+					String y = new String(Arrays.copyOfRange(messages[i].toCharArray(), 1, messages[i].length()-1));
+					String[] z = y.split(",", 2);
+					String sender = z[0];
+					String message = z[1];
+					if(i > messages.length - 21) {
+						displayMessage(sender, message, g);
+					} else {
+						msgToDelete.add(message);
+					}
+					}
+					
+				sV.addView(g);
+				r.addView(sV);
+				mainLayout.addView(r, rlp);
+				setContentView(mainLayout);
+				if(!msgToDelete.isEmpty()) {
+					deleteMessages();
 
-		
-		
+				}
+			}
+		}
 	}
 	
 	public void sendMessage(View view) {
 		Intent intent = new Intent(this, SendMessageActivity.class);
 		startActivity(intent);
+	}
+	
+	public void deleteMessages() {
+		ServerRequest servReq = new ServerRequest(this);
+		requestNum = 1;
+		servReq.deleteMessage(currUser, msgToDelete.get(0));
+		
 	}
 	
 	public void getMessages() {
